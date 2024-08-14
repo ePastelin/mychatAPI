@@ -4,7 +4,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 import webhook from './routes/webhook.routes.js';
 import chat from './routes/chat.routes.js';
 import auth from './routes/auth.routes.js';
-import { getConnection } from './database/config.js';
+// import { getConnection } from './database/config.js';
 import cors from 'cors';
 
 const app = express();
@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 export const wss = new WebSocketServer({ server });
 
 // Database connection
-getConnection();
+// getConnection();
 
 app.use(cors());
 app.use(express.json());
