@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs' 
-// import { pool } from '../database/config.js'
+import { pool } from '../database/config.js'
 import { generateToken } from '../helpers/jwt.js';
 
 export const createUser = async (req, res) => {

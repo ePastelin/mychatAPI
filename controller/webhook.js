@@ -1,5 +1,5 @@
 
-// import { pool } from '../database/config.js';
+import { pool } from '../database/config.js';
 import { wss } from '../index.js'
 import 'dotenv/config';
 

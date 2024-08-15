@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import { pool } from '../database/config.js';
+import { pool } from '../database/config.js';
 
 export async function sendMessage(req, res) {
 
