@@ -12,7 +12,7 @@ export const pool = createPool({
     port: DB_PORT,
 })
 
-console.log(pool)
+console.log(DB_HOST, DB_PORT)
 
 export const getConnection = async () => {
     try {
