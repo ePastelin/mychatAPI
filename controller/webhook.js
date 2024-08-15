@@ -48,6 +48,10 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
 
             const { name } = contacts[0].profile;
 
+            const bodyJSON = JSON.stringify(req.body, null, 2)
+            const message = req.body["entry"][0]["changes"][0]["value"]["messages"]
+            console.log(message)
+
             // Aquí es donde puedes transmitir el mensaje a través del WebSocket
             const newMessage = {
                 display_phone_number,
@@ -59,10 +63,10 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
             // Transmitir el nuevo mensaje a todos los clientes conectados
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', message);
+                    console.log('Enviando mensaje a través de WebSocket:', messages);
                     client.send(JSON.stringify({
                         idChat,
-                        messages,
+                        message: 1,
                         sender: 0, // Indica que el usuario envió el mensaje
                     }));
                 }
