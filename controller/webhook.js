@@ -74,7 +74,7 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
                     }));
                 }
             });
-    } catch (e) {
+    } else {}} catch (e) {
         console.error('Error al procesar el mensaje:', e);
         res.send("EVENT_RECEIVED");
     }
