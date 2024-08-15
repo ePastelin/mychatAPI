@@ -24,41 +24,41 @@ export const verificar = async (req, res) => {
 // Suponiendo que tienes acceso al WebSocket Server (wss)
 export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (wss)
     try {
-        var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
-        var changes = entry ? entry["changes"][0] : undefined;
-        var value = changes ? changes["value"] : undefined;
-        var metadata = value ? value["metadata"] : undefined;
-        var contacts = value ? value["contacts"] : undefined;
-        var messages = value ? value["messages"] : undefined;
+        // var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
+        // var changes = entry ? entry["changes"][0] : undefined;
+        // var value = changes ? changes["value"] : undefined;
+        // var metadata = value ? value["metadata"] : undefined;
+        // var contacts = value ? value["contacts"] : undefined;
+        // var messages = value ? value["messages"] : undefined;
 
-        if (messages === undefined) return;
+        // if (messages === undefined) return;
 
-        if (metadata && messages && contacts) {
-            const { display_phone_number, phone_number_id } = metadata;
+        // if (metadata && messages && contacts) {
+        //     const { display_phone_number, phone_number_id } = metadata;
 
-            const formattedMessages = messages.map(message => {
-                if (message.text) {
-                    return {
-                        ...message,
-                        text: message.text.body
-                    };
-                }
-                return message;
-            });
+        //     const formattedMessages = messages.map(message => {
+        //         if (message.text) {
+        //             return {
+        //                 ...message,
+        //                 text: message.text.body
+        //             };
+        //         }
+        //         return message;
+        //     });
 
-            const { name } = contacts[0].profile;
+        //     const { name } = contacts[0].profile;
 
-            const bodyJSON = JSON.stringify(req.body, null, 2)
-            const message = req.body["entry"][0]["changes"][0]["value"]["messages"]
-            console.log(message)
+        //     const bodyJSON = JSON.stringify(req.body, null, 2)
+        //     const message = req.body["entry"][0]["changes"][0]["value"]["messages"]
+        //     console.log(message)
 
-            // Aquí es donde puedes transmitir el mensaje a través del WebSocket
-            const newMessage = {
-                display_phone_number,
-                phone_number_id,
-                messages: formattedMessages,
-                name
-            };
+        //     // Aquí es donde puedes transmitir el mensaje a través del WebSocket
+        //     const newMessage = {
+        //         display_phone_number,
+        //         phone_number_id,
+        //         messages: formattedMessages,
+        //         name
+        //     };
 
             // Transmitir el nuevo mensaje a todos los clientes conectados
             wss.clients.forEach(client => {
@@ -74,9 +74,6 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
 
             console.log(newMessage);
             res.json(newMessage);
-        } else {
-            throw new Error("value, messages, or contacts is undefined");
-        }
     } catch (e) {
         console.error('Error al procesar el mensaje:', e);
         res.send("EVENT_RECEIVED");
