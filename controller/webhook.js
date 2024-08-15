@@ -63,7 +63,7 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
             // Transmitir el nuevo mensaje a todos los clientes conectados
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', messages);
+                    console.log('Enviando mensaje a través de WebSocket:', message);
                     client.send(JSON.stringify({
                         idChat: 1,
                         message,
@@ -71,9 +71,6 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
                     }));
                 }
             });
-
-            console.log(newMessage);
-            res.json(newMessage);
     } catch (e) {
         console.error('Error al procesar el mensaje:', e);
         res.send("EVENT_RECEIVED");
