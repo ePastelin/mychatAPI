@@ -65,8 +65,8 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
                     console.log('Enviando mensaje a través de WebSocket:', messages);
                     client.send(JSON.stringify({
-                        idChat,
-                        message: 1,
+                        idChat: 1,
+                        message,
                         sender: 0, // Indica que el usuario envió el mensaje
                     }));
                 }
