@@ -49,7 +49,7 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
         //     const { name } = contacts[0].profile;
 
             const bodyJSON = JSON.stringify(req.body, null, 2)
-            const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"]
+            const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
             console.log(message)
 
