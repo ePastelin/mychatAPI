@@ -25,6 +25,7 @@ export const verificar = async (req, res) => {
 // Suponiendo que tienes acceso al WebSocket Server (wss)
 export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Server (wss)
     try {
+        console.log(req.body)
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
         var changes = entry ? entry["changes"][0] : undefined;
         var value = changes ? changes["value"] : undefined;
@@ -35,17 +36,7 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         if (messages === undefined) return;
 
         if (metadata && messages && contacts) {
-            const { display_phone_number, phone_number_id } = metadata;
-
-            const formattedMessages = messages.map(message => {
-                if (message.text) {
-                    return {
-                        ...message,
-                        text: message.text.body
-                    };
-                }
-                return message;
-            });
+            const { phone_number_id } = metadata;
 
             const { name } = contacts[0].profile;
 
@@ -63,17 +54,6 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
-            console.log(message, phone_number_id, from, idChat, rows)
-
-            // Aquí es donde puedes transmitir el mensaje a través del WebSocket
-        //     const newMessage = {
-        //         display_phone_number,
-        //         phone_number_id,
-        //         messages: formattedMessages,
-        //         name
-        //     };
-
-            // Transmitir el nuevo mensaje a todos los clientes conectados
 
             const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 0, ?)', [idChat, message]);
             console.log('Resultado de la inserción:', envio);
