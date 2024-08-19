@@ -58,9 +58,9 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
-            console.log(message, phone_number_id, from)
+            console.log(message, phone_number_id, from, idChat, rows)
 
-        //     // Aquí es donde puedes transmitir el mensaje a través del WebSocket
+            // Aquí es donde puedes transmitir el mensaje a través del WebSocket
         //     const newMessage = {
         //         display_phone_number,
         //         phone_number_id,
