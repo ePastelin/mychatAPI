@@ -22,7 +22,7 @@ export const verificar = async (req, res) => {
 };
 
 // Suponiendo que tienes acceso al WebSocket Server (wss)
-export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (wss)
+export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Server (wss)
     try {
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
         var changes = entry ? entry["changes"][0] : undefined;
@@ -50,11 +50,12 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
 
             console.log(messages[0].from)
             
-            const from = messages[0]
+            const {from} = messages[0]
 
+            const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, from]);
 
+            const idChat = rows[0]
 
-            const bodyJSON = JSON.stringify(req.body, null, 2)
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
             console.log(message, phone_number_id, from)
@@ -72,7 +73,7 @@ export const recibir = (req, res) => {  // Recibes el objeto WebSocket Server (w
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
                     console.log('Enviando mensaje a través de WebSocket:', message);
                     client.send(JSON.stringify({
-                        idChat: 1,
+                        idChat: idChat,
                         message,
                         sender: 0, // Indica que el usuario envió el mensaje
                     }));
