@@ -1,5 +1,5 @@
 export default function formatNumber(number) {
-    if(number.startstWith('521')){
+    if(number.startsWith('521')){
         return number.replace(/^52(1)/, '52')
     }
 
