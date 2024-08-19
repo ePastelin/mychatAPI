@@ -59,7 +59,7 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
 
-            const idChat = rows[0]
+            const idChat = rows[0].id
 
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
