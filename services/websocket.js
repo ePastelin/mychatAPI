@@ -1,6 +1,6 @@
 // websocket.js
 import WebSocket, { WebSocketServer } from 'ws';
-import { pool } from './database/config.js'; // Asegúrate de importar la conexión a la base de datos
+import { pool } from '../database/config.js'; // Asegúrate de importar la conexión a la base de datos
 
 const setupWebSocket = (server) => {
     const wss = new WebSocketServer({ server });
