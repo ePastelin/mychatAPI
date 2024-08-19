@@ -74,6 +74,10 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         //     };
 
             // Transmitir el nuevo mensaje a todos los clientes conectados
+
+            const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 0, ?)', [idChat, message]);
+            console.log('Resultado de la inserción:', envio);
+
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
                     console.log('Enviando mensaje a través de WebSocket:', message);
