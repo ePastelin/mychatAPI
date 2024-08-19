@@ -1,5 +1,6 @@
 
 import { pool } from '../database/config.js';
+import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js'
 import 'dotenv/config';
 
@@ -52,9 +53,11 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
             
             const {from} = messages[0]
 
-            console.log(phone_number_id, from)
+            const socioNumber = formatNumber(from)
 
-            const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, from]);
+            console.log(phone_number_id, socioNumber)
+
+            const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
 
             const idChat = rows[0]
 
