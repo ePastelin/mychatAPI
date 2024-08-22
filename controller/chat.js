@@ -76,7 +76,7 @@ export async function getMessages(req, res) {
     const { id } = req.params
 
     try {
-        const [rows] = await pool.query('SELECT * FROM message WHERE chat_id = (?) ORDER BY date DESC', [id])
+        const [rows] = await pool.query('SELECT * FROM message WHERE chat_id = (?) ORDER BY date ASC', [id])
 
         res.status(200).json(rows)
     }catch(error) {
