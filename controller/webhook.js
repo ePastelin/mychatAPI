@@ -25,7 +25,7 @@ export const verificar = async (req, res) => {
 // Suponiendo que tienes acceso al WebSocket Server (wss)
 export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Server (wss)
     try {
-        console.log(req.body)
+        console.log(req.body, "Aquí se envió un mensaje")
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
         var changes = entry ? entry["changes"][0] : undefined;
         var value = changes ? changes["value"] : undefined;
@@ -60,7 +60,7 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', message);
+                    console.log('Enviando mensaje a través de WebSocket:', message, 'a cliente:', client._socket.remoteAddress);
                     client.send(JSON.stringify({
                         idChat: idChat,
                         message,
