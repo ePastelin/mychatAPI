@@ -32,6 +32,8 @@ export async function sendMessage(req, res) {
             }
         });
 
+        console.log(response)
+
         const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 1, ?)', [idChat, message])
         console.log(envio)
 
