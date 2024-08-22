@@ -56,18 +56,10 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
             const message = text.body
 
             const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 0, ?)', [idChat, message]);
-            // console.log('Resultado de la inserción:', envio);
-
-            const existingMessage = await pool.query('SELECT * FROM message WHERE chat_id = ? AND message = ?', [idChat, message]);
-if (existingMessage.length > 0) {
-    console.log('Mensaje duplicado detectado, omitiendo inserción.');
-    return;
-}
+            console.log('Resultado de la inserción:', envio);
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', message, 'a cliente:', client._socket.remoteAddress);
-
                     console.log('Enviando mensaje a través de WebSocket:', message);
                     client.send(JSON.stringify({
                         idChat: idChat,
