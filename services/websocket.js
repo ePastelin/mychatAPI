@@ -39,12 +39,16 @@ const setupWebSocket = (server) => {
                     }
                 });
 
+                const { data } = response
+
+                const { id } = data.messages[0]
+
                 console.log('Respuesta de la API de WhatsApp:', response.data);
 
                 // Inserta el mensaje en la base de datos
                 const result = await pool.query(
-                    'INSERT INTO message (chat_id, sender, message) VALUES (?, 1, ?)', 
-                    [idChat, message]
+                    'INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 1, ?)', 
+                    [id, idChat, message]
                 );
                 console.log('Mensaje guardado en la BD:', result);
 
