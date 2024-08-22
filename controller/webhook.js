@@ -56,13 +56,13 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
 
-            const existingMessage = await pool.query('SELECT * FROM message WHERE id = ?', [id])
+            const existingMessage = await pool.query('SELECT * FROM message WHERE id = ?', [idMessage])
             if (existingMessage.length > 0) {
                 console.log('Mensaje duplicado')
                 return
             }
 
-            const envio = await pool.query('INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 0, ?)', [id, idChat, message]);
+            const envio = await pool.query('INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 0, ?)', [idMessage, idChat, message]);
             console.log('Resultado de la inserción:', envio);
 
             wss.clients.forEach(client => {
