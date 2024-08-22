@@ -33,7 +33,7 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         var contacts = value ? value["contacts"] : undefined;
         var messages = value ? value["messages"] : undefined;
         var idMessage = messages ? messages["id"] : undefined;
-        console.log(idMessage, "Este es el id del mensaje que llegó")
+        console.log(idMessage, "Este es el id del mensaje que llegó", messages)
 
         if (messages === undefined) return;
 
@@ -42,13 +42,9 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             const { name } = contacts[0].profile;
 
-            console.log(messages[0].from)
-            
             const {from} = messages[0]
 
             const socioNumber = formatNumber(from)
-
-            console.log(phone_number_id, socioNumber)
 
             const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
 
