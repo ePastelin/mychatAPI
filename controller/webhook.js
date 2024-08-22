@@ -56,7 +56,9 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
 
+            console.log(idMessage)
             const existingMessage = await pool.query('SELECT * FROM message WHERE id = ?', [idMessage])
+            console.log(existingMessage)
             if (existingMessage.length > 0) {
                 console.log('Mensaje duplicado')
                 return
