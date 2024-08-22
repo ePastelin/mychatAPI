@@ -28,11 +28,11 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         console.log(req.body, "Aquí se envió un mensaje")
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
         var changes = entry ? entry["changes"][0] : undefined;
-        var idMessage = entry ? entry["id"] : undefined
         var value = changes ? changes["value"] : undefined;
         var metadata = value ? value["metadata"] : undefined;
         var contacts = value ? value["contacts"] : undefined;
         var messages = value ? value["messages"] : undefined;
+        var idMessage = messages ? messages["id"] : undefined;
 
         if (messages === undefined) return;
 
