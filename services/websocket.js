@@ -1,5 +1,6 @@
 // websocket.js
 import WebSocket, { WebSocketServer } from 'ws';
+import axios from 'axios';
 import { pool } from '../database/config.js'; // Asegúrate de importar la conexión a la base de datos
 
 const setupWebSocket = (server) => {
@@ -13,6 +14,33 @@ const setupWebSocket = (server) => {
             const { message, idChat } = parsedData;
 
             try {
+                // Obtén los números relacionados a ese chat
+                const [rows] = await pool.query('SELECT our_number, socio_number FROM chat WHERE id = ?', [idChat]);
+                const { our_number, socio_number } = rows[0];
+
+                // Configura la solicitud a la API de WhatsApp
+                const url = `https://graph.facebook.com/v20.0/${our_number}/messages`;
+                const accessToken = 'EAAwzliYKTZBwBO65SDKzG1KVx0LdkGxYSXOWV8DCscUbwBXEnQCm0a8WgKcTYNMZBCtRRlfGslSt3kzwaKtiXqUPtSrmKSMPzWVq3aKGYM9bHrlwbQ5igZCqlQem769DiHHPt1BxKDQ3aIcTZBN1IVnK02ZBAS0HxEBzhj5nZAqDsWyGqYGfHY10tvJdgmTDqWFQZDZD'; // Cambia esto por tu token válido
+                const whatsappData = {
+                    messaging_product: 'whatsapp',
+                    recipient_type: 'individual',
+                    to: socio_number, 
+                    type: 'text',
+                    text: {
+                        preview_url: false,
+                        body: message 
+                    }
+                };
+
+                // Envía el mensaje a través de la API de WhatsApp
+                const response = await axios.post(url, whatsappData, {
+                    params: {
+                        access_token: accessToken
+                    }
+                });
+
+                console.log('Respuesta de la API de WhatsApp:', response.data);
+
                 // Inserta el mensaje en la base de datos
                 const result = await pool.query(
                     'INSERT INTO message (chat_id, sender, message) VALUES (?, 1, ?)', 
