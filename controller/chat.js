@@ -76,8 +76,6 @@ export async function getMessages(req, res) {
     try {
         const [rows] = await pool.query('SELECT * FROM message WHERE chat_id = (?)', [id])
 
-
-        console.log(rows)
         res.status(200).json(rows)
     }catch(error) {
         console.error(error)
