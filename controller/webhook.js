@@ -40,8 +40,6 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         if (metadata && messages && contacts) {
             const { phone_number_id } = metadata;
 
-            const { name } = contacts[0].profile;
-
             const {from} = messages[0]
 
             const socioNumber = formatNumber(from)
@@ -65,7 +63,6 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', message, 'a cliente:', client._socket.remoteAddress);
                     client.send(JSON.stringify({
                         idChat: idChat,
                         message,
