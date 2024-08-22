@@ -24,6 +24,9 @@ export const verificar = async (req, res) => {
 
 // Suponiendo que tienes acceso al WebSocket Server (wss)
 export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Server (wss)
+   
+    console.log('Webhook request body:', JSON.stringify(req.body, null, 2));
+   
     try {
         console.log(req.body)
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
@@ -55,12 +58,18 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
             const {text} = req.body["entry"][0]["changes"][0]["value"]["messages"][0]
             const message = text.body
 
+            const existingMessage = await pool.query('SELECT * FROM message WHERE chat_id = ? AND message = ?', [idChat, message]);
+            if (existingMessage.length > 0) {
+                console.log('Mensaje duplicado detectado, omitiendo inserción.');
+                return;
+            }
+
             const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 0, ?)', [idChat, message]);
             console.log('Resultado de la inserción:', envio);
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) { // 1 es el valor de WebSocket.OPEN
-                    console.log('Enviando mensaje a través de WebSocket:', message);
+                    console.log('Enviando mensaje a través de WebSocket:', message, 'a cliente:', client._socket.remoteAddress);
                     client.send(JSON.stringify({
                         idChat: idChat,
                         message,
