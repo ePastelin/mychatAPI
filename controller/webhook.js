@@ -26,9 +26,8 @@ export const verificar = async (req, res) => {
 export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Server (wss)
     try {
         var entry = req.body["entry"] ? req.body["entry"][0] : undefined;
-        console.log("Aquí va el entry", entry)
         var changes = entry ? entry["changes"][0] : undefined;
-    // console.log(changes, "Aquí veremos que hay en changes")
+    console.log(changes, "Aquí veremos que hay en changes")
         console.log("Aquí vas los estados", statuses)
         var value = changes ? changes["value"] : undefined;
         var metadata = value ? value["metadata"] : undefined;
