@@ -49,8 +49,8 @@ const setupWebSocket = (server) => {
 
                 // Inserta el mensaje en la base de datos
                 const result = await pool.query(
-                    'INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 1, ?, ?)', 
-                    [id, idChat, message, date]
+                    'INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 1, ?)', 
+                    [id, idChat, message]
                 );
                 console.log('Mensaje guardado en la BD:', result);
 
@@ -61,7 +61,7 @@ const setupWebSocket = (server) => {
                             idChat,
                             message,
                             sender: 1, // Indica que el usuario envió el mensaje
-                            date: date,
+                            date: Date.now(),
                             status: 'sent'
                         }));
                     }
