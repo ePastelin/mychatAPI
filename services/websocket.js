@@ -62,6 +62,7 @@ const setupWebSocket = (server) => {
                             message,
                             sender: 1, // Indica que el usuario envió el mensaje
                             date: date,
+                            status: 'sent'
                         }));
                     }
                 });
