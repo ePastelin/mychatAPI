@@ -11,6 +11,4 @@ router.post('/', recibir)
 // Ruta para enviar mensaje a través de la API de Facebook Graph
 router.post('/send', sendMessage);
 
-
-
 export default router;
