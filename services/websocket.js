@@ -59,7 +59,8 @@ const setupWebSocket = (server) => {
                             idChat,
                             message,
                             sender: 1, // Indica que el usuario envió el mensaje
-                            date: Date.now()
+                            date: Date.now(),
+                            status: 'sent'
                         }));
                     }
                 });
