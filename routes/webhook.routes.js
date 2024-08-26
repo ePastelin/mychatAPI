@@ -1,11 +1,10 @@
 import { Router } from 'express'
 const router = Router();
 
-import { verificar, recibir, test } from '../controller/webhook.js';
+import { verificar, recibir } from '../controller/webhook.js';
 import { sendMessage } from '../controller/chat.js';
 
 // Rutas existentes
-router.post('/test', test)
 router.get('/', verificar);
 router.post('/', recibir)
 
