@@ -1,6 +1,7 @@
 import { pool } from '../database/config.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
+import WebSocket from 'ws';
 
 export const updateMessageStatus = async (statuses) => {
     try {
