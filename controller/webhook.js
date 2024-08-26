@@ -36,10 +36,10 @@ export const recibir = async (req, res) => {  // Recibes el objeto WebSocket Ser
         var idMessage = messages ? messages[0]["id"] : undefined;
         // console.log(idMessage, "Este es el id del mensaje que llegó", messages)
 
-        if(statuses.length > 0) {
+        if(statuses) {
             const {id, status} = statuses[0]
             console.log(id, status, "Aquí se inserta")
-            await pool.query('UPDATE messages SET status = ? WHERE id = ?', [status, id]);
+            await pool.query('UPDATE message SET status = ? WHERE id = ?', [status, id]);
         }
 
         if (metadata && messages && contacts) {
