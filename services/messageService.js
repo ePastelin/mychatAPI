@@ -6,6 +6,15 @@ export const updateMessageStatus = async (statuses) => {
     try {
         const { id, status } = statuses[0];
         await pool.query('UPDATE message SET status = ? WHERE id = ?', [status, id]);
+
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    idMessage: id,
+                    status,
+                }));
+            }
+        })
     } catch (error) {
         console.error('Error updating message status:', error);
     }
