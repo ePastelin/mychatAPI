@@ -1,4 +1,5 @@
 import { pool } from '../database/config.js';
+import formatDate from '../helpers/formatDate.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
 import WebSocket from 'ws';
@@ -22,6 +23,8 @@ export const updateMessageStatus = async (statuses) => {
 };
 
 export const processIncomingMessage = async (body) => {
+    const date = formatDate(Date.now())
+    
     try {
         const { metadata, contacts, messages } = body.entry[0].changes[0].value;
         const { phone_number_id } = metadata;
@@ -38,7 +41,7 @@ export const processIncomingMessage = async (body) => {
             return;
         }
 
-        await pool.query('INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, message, Date.now()]);
+        await pool.query('INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, message, date]);
 
         wss.clients.forEach(client => {
             if (client.readyState === 1) {

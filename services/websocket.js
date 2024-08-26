@@ -2,9 +2,11 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import axios from 'axios';
 import { pool } from '../database/config.js'; // Asegúrate de importar la conexión a la base de datos
+import formatDate from '../helpers/formatDate.js';
 
 const setupWebSocket = (server) => {
     const wss = new WebSocketServer({ server });
+    const date = formatDate(Date.now())
 
     wss.on('connection', (ws) => {
         console.log('Nuevo cliente conectado');
@@ -48,7 +50,7 @@ const setupWebSocket = (server) => {
                 // Inserta el mensaje en la base de datos
                 const result = await pool.query(
                     'INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 1, ?, ?)', 
-                    [id, idChat, message, Date.now()]
+                    [id, idChat, message, date]
                 );
                 console.log('Mensaje guardado en la BD:', result);
 
@@ -59,8 +61,7 @@ const setupWebSocket = (server) => {
                             idChat,
                             message,
                             sender: 1, // Indica que el usuario envió el mensaje
-                            date: Date.now(),
-                            status: 'sent'
+                            date: date,
                         }));
                     }
                 });
