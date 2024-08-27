@@ -41,7 +41,7 @@ export const processIncomingMessage = async (body) => {
             return;
         }
 
-        await pool.query('INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, message, formatDate(Date.now())]);
+        await pool.query('INSERT INTO message (id, chat_id, sender, message, date) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, message, date]);
 
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
