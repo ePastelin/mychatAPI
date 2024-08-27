@@ -58,6 +58,7 @@ const setupWebSocket = (server) => {
                 wss.clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
                         client.send(JSON.stringify({
+                            id,
                             idChat,
                             message,
                             sender: 1, // Indica que el usuario envió el mensaje
