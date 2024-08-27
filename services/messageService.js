@@ -45,7 +45,7 @@ export const processIncomingMessage = async (body) => {
 
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
-                client.send(JSON.stringify({ idChat, message, sender: 0 }));
+                client.send(JSON.stringify({ idChat, message, sender: 0, date: Date.now() }));
             }
         });
     } catch (error) {
