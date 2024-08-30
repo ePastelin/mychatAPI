@@ -18,6 +18,11 @@ getConnection();
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src 'self' wss://552b-45-231-171-201.ngrok-free.app;");
+    next();
+  });
+
 app.use(routes)
 
 server.listen(PORT, () => {
