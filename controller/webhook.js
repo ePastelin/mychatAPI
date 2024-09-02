@@ -1,11 +1,9 @@
 import { processIncomingMessage, updateMessageStatus } from '../services/messageService.js';
 
 export const verificar = (req, res) => {
-    const { mode, verify_token, challenge } = req.query;
-
-    console.log(req.query, process.env.WEBHOOK_VERIFY_TOKEN)
+    const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
   
-    if (mode === "subscribe" && verify_token === process.env.WEBHOOK_VERIFY_TOKEN) {
+    if (mode === "subscribe" && token === process.env.WEBHOOK_VERIFY_TOKEN) {
         res.status(200).send(challenge);
         console.log("Webhook verified successfully!");
     } else {
