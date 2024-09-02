@@ -24,6 +24,7 @@ export const updateMessageStatus = async (statuses) => {
 
 export const processIncomingMessage = async (body) => {
     const date = formatDate(Date.now())
+    console.log(body)
     
     try {
         const { metadata, contacts, messages } = body.entry[0].changes[0].value;
