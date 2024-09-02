@@ -18,12 +18,6 @@ getConnection();
 app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src 'self' *;");
-    next();
-  });
-  
-
 app.use(routes)
 
 server.listen(PORT, () => {
