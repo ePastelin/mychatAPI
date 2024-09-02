@@ -9,6 +9,11 @@ const setupWebSocket = (server) => {
     const date = formatDate(Date.now())
 
     wss.on('connection', (ws) => {
+        if (wss.clients.size > 1) {
+            ws.close(4001, 'Otro cliente ya está conectado');
+            console.log('Conexión adicional rechazada.');
+            return;
+        }
         console.log('Nuevo cliente conectado');
 
         ws.on('message', async (data) => {
