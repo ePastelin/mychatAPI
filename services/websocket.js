@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { getChatDetails, saveMessageToDatabase } from '../helpers/querys.js';
+import { getChatDetails, saveMessageToDatabase, updateMessageStatus } from '../helpers/querys.js';
 import { sendWhatsAppMessage } from '../helpers/whatsapp.js';
 import formatDate from '../helpers/formatDate.js';
 
@@ -12,21 +12,29 @@ const setupWebSocket = (server, pool) => {
 
         ws.on('message', async (data) => {
             const parsedData = JSON.parse(data);
-            const { message, idChat } = parsedData;
+            const { message, idChat, action, idMessage } = parsedData;
 
             try {
-                // Obtener detalles del chat desde la base de datos
-                const { our_number, socio_number } = await getChatDetails(pool, idChat);
+                if (action === 'message_read') {
+                    // Actualiza el estado del mensaje a 'read' en la base de datos
+                    await updateMessageStatus(pool, idMessage, 'read');
+                    
+                    // Notifica a los demás clientes que el mensaje fue leído
+                    notifyClients(wss, idMessage, idChat, null, 'read', Date.now());
+                } else {
+                    // Obtener detalles del chat desde la base de datos
+                    const { our_number, socio_number } = await getChatDetails(pool, idChat);
 
-                // Enviar el mensaje a través de la API de WhatsApp
-                const messageId = await sendWhatsAppMessage(our_number, socio_number, message);
+                    // Enviar el mensaje a través de la API de WhatsApp
+                    const messageId = await sendWhatsAppMessage(our_number, socio_number, message);
 
-                // Guardar el mensaje en la base de datos
-                const result = await saveMessageToDatabase(pool, messageId, idChat, message);
-                console.log('Mensaje guardado en la BD:', result);
+                    // Guardar el mensaje en la base de datos
+                    const result = await saveMessageToDatabase(pool, messageId, idChat, message);
+                    console.log('Mensaje guardado en la BD:', result);
 
-                // Notificar a todos los clientes conectados
-                notifyClients(wss, messageId, idChat, message);
+                    // Notificar a todos los clientes conectados
+                    notifyClients(wss, messageId, idChat, message);
+                }
             } catch (error) {
                 console.error('Error al manejar el mensaje:', error);
             }
@@ -36,16 +44,16 @@ const setupWebSocket = (server, pool) => {
     return wss;
 };
 
-const notifyClients = (wss, messageId, idChat, message) => {
+const notifyClients = (wss, messageId, idChat, message, status = 'sent', date = Date.now()) => {
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
                 id: messageId,
                 idChat,
                 message,
-                sender: 1, // Indica que el usuario envió el mensaje
-                date: Date.now(),
-                status: 'sent'
+                sender: message ? 1 : undefined, // Indica que el usuario envió el mensaje
+                date,
+                status
             }));
         }
     });

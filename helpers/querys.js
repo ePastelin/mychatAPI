@@ -13,3 +13,7 @@ export const getChatDetails = async (pool, chatId) => {
     );
     return rows[0];
 };
+
+export const updateMessageStatus = async (pool, idMessage, status) => {
+    await pool.query('UPDATE message SET status = ? WHERE id = ?', [status, idMessage]);
+}
