@@ -20,7 +20,7 @@ const setupWebSocket = (server, pool) => {
                     await updateMessageStatus(pool, idMessage, 'read');
                     
                     // Notifica a los demás clientes que el mensaje fue leído
-                    notifyClients(wss, idMessage, idChat, null, 'read', Date.now());
+                    notifyClients(wss, idMessage, null, null, 'message_read');
                 } else {
                     // Obtener detalles del chat desde la base de datos
                     const { our_number, socio_number } = await getChatDetails(pool, idChat);
@@ -33,7 +33,7 @@ const setupWebSocket = (server, pool) => {
                     console.log('Mensaje guardado en la BD:', result);
 
                     // Notificar a todos los clientes conectados
-                    notifyClients(wss, messageId, idChat, message);
+                    notifyClients(wss, messageId, idChat, message, 'message');
                 }
             } catch (error) {
                 console.error('Error al manejar el mensaje:', error);
@@ -44,16 +44,17 @@ const setupWebSocket = (server, pool) => {
     return wss;
 };
 
-const notifyClients = (wss, messageId, idChat, message, status = 'sent', date = Date.now()) => {
+const notifyClients = (wss, messageId, idChat, message, action) => {
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
+                action: action || 'message',
                 id: messageId,
                 idChat,
                 message,
-                sender: message ? 1 : undefined, // Indica que el usuario envió el mensaje
-                date,
-                status
+                sender: 1, // Indica que el usuario envió el mensaje
+                date: Date.now(),
+                status: action === 'message_read' ? 'read' : 'sent'
             }));
         }
     });
