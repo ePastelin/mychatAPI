@@ -20,7 +20,7 @@ const setupWebSocket = (server, pool) => {
                     await updateMessageStatus(pool, idMessage, 'read');
                     
                     // Notifica a los demás clientes que el mensaje fue leído
-                    notifyClients(wss, idMessage, idChat, null, 'message_read');
+                    notifyClients(wss, idMessage, null, null, 'message_read');
                 } else {
                     // Obtener detalles del chat desde la base de datos
                     const { our_number, socio_number } = await getChatDetails(pool, idChat);
