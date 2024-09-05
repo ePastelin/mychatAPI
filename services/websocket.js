@@ -18,6 +18,9 @@ const setupWebSocket = (server, pool) => {
                 if (action === 'message_read') {
                     // Actualiza el estado del mensaje a 'read' en la base de datos
                     await updateMessageStatus(pool, idMessage, 'read');
+
+                    await pool.query('UPDATE chat SET unread = 0 WHERE id = ?', [idChat]);
+
                     
                     // Notifica a los demás clientes que el mensaje fue leído
                     notifyClients(wss, idMessage, idChat, null, 'message_read');
