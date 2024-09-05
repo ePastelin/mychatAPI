@@ -5,7 +5,7 @@ export const saveMessageToDatabase = async (pool, messageId, chatId, message) =>
     );
     
     const saving = await pool.query(
-        'INSERT INTO chat (last_message) VALUES (?) WHERE id = ?', [message, chatId]
+        'UPDATE INTO chat (last_message) VALUES (?) WHERE id = ?', [message, chatId]
     )
 
     return result;
