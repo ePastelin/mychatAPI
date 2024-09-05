@@ -54,7 +54,7 @@ const notifyClients = (wss, messageId, idChat, message, action) => {
             client.send(JSON.stringify({
                 action: action || 'message',
                 id: messageId,
-                idChat,
+                chat_id: idChat,
                 message,
                 sender: 1, // Indica que el usuario envió el mensaje
                 date: Date.now(),
