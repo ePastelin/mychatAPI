@@ -12,8 +12,7 @@ const setupWebSocket = (server, pool) => {
 
         ws.on('message', async (data) => {
             const parsedData = JSON.parse(data);
-            const { message, chat_id, action, idMessage } = parsedData;
-            const idChat = chat_id
+            const { message, idChat, action, idMessage } = parsedData;
 
             try {
                 if (action === 'message_read') {
@@ -55,7 +54,7 @@ const notifyClients = (wss, messageId, idChat, message, action) => {
             client.send(JSON.stringify({
                 action: action || 'message',
                 id: messageId,
-                chat_id: idChat,
+                idChat,
                 message,
                 sender: 1, // Indica que el usuario envió el mensaje
                 date: Date.now(),
