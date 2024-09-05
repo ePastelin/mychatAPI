@@ -33,6 +33,7 @@ const setupWebSocket = (server, pool) => {
                     console.log('Mensaje guardado en la BD:', result);
 
                     // Notificar a todos los clientes conectados
+                    console.log("Entro a notificar")
                     notifyClients(wss, messageId, idChat, message, 'message');
                 }
             } catch (error) {
