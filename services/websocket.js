@@ -12,7 +12,8 @@ const setupWebSocket = (server, pool) => {
 
         ws.on('message', async (data) => {
             const parsedData = JSON.parse(data);
-            const { message, idChat, action, idMessage } = parsedData;
+            const { message, chat_id, action, idMessage } = parsedData;
+            const idChat = chat_id
 
             try {
                 if (action === 'message_read') {
