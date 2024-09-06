@@ -5,8 +5,9 @@ export const saveMessageToDatabase = async (pool, messageId, chatId, message) =>
     );
     
     const saving = await pool.query(
-        'UPDATE chat SET last_message = ? WHERE id = ?', [message, chatId]
-    )
+        'UPDATE chat SET last_message = ?, last_date = NOW() WHERE id = ?', 
+        [message, chatId]
+    );
 
     return result;
 };
