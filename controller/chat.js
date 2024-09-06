@@ -34,7 +34,7 @@ export async function sendMessage(req, res) {
 
         console.log(response)
 
-        const envio = await pool.query('INSERT INTO message (chat_id, sender, message) VALUES (?, 1, ?)', [idChat, message])
+        const envio = await pool.query('INSERT INTO message (idChat, sender, message) VALUES (?, 1, ?)', [idChat, message])
         console.log(envio)
 
         res.json(response.data);
@@ -76,7 +76,7 @@ export async function getMessages(req, res) {
     const { id } = req.params
 
     try {
-        const [rows] = await pool.query('SELECT * FROM message WHERE chat_id = (?) ORDER BY date ASC', [id])
+        const [rows] = await pool.query('SELECT * FROM message WHERE idChat = (?) ORDER BY date ASC', [id])
 
         res.status(200).json(rows)
     }catch(error) {

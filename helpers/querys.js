@@ -1,6 +1,6 @@
 export const saveMessageToDatabase = async (pool, messageId, chatId, message) => {
     const result = await pool.query(
-        'INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 1, ?)', 
+        'INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 1, ?)', 
         [messageId, chatId, message]
     );
     

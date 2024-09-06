@@ -42,7 +42,7 @@ export const processIncomingMessage = async (body) => {
             return;
         }
 
-        await pool.query('INSERT INTO message (id, chat_id, sender, message) VALUES (?, ?, 0, ?)', [idMessage, idChat, message]);
+        await pool.query('INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 0, ?)', [idMessage, idChat, message]);
         await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1 WHERE id = ?', [message, idChat])
 
         wss.clients.forEach(client => {
