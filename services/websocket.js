@@ -53,7 +53,7 @@ const notifyClients = (wss, messageId, idChat, message, action) => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
                 action: action || 'message',
-                id: messageId,
+                idMessage: messageId,
                 idChat,
                 message,
                 sender: 1, // Indica que el usuario envió el mensaje
