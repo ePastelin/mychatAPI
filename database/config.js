@@ -10,6 +10,7 @@ export const pool = createPool({
     password: DB_PASSWORD,
     database: DB_DATABASE,
     port: DB_PORT,
+    timezone: 'America/Cancun'
 })
 
 console.log(DB_HOST, DB_PORT)

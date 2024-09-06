@@ -12,6 +12,7 @@ const setupWebSocket = (server, pool) => {
 
         ws.on('message', async (data) => {
             const parsedData = JSON.parse(data);
+            console.log(parsedData)
             const { message, idChat, action, idMessage } = parsedData;
 
             try {
