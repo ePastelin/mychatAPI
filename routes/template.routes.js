@@ -3,5 +3,7 @@ import { jwtValidator } from '../middleware/jwtValidator'
 import { createTemplate } from '../controller/template'
 const router = Router()
 
-router.post('/createTemplate', jwtValidator, createTemplate)
+router.post('/create', jwtValidator, createTemplate)
+
+export default router
 

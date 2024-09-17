@@ -1,4 +1,5 @@
 import axios from 'axios'
+import api from './axios';
 
 export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`
@@ -15,9 +16,7 @@ export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
         }
     };
 
-    const response = await axios.post(url, whatsappData, {
-        params: { access_token: accessToken }
-    });
+    const response = await api.post(url, whatsappData);
 
     return response.data.messages[0].id
 }
