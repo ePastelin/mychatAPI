@@ -1,5 +1,5 @@
 import axios from 'axios'
-import api from './axios';
+import api from './axios.js';
 
 export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`
