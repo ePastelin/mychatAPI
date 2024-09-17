@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { pool } from '../database/config.js';
+import api from '../helpers/axios.js';
 
 export async function sendMessage(req, res) {
 
@@ -13,8 +14,7 @@ export async function sendMessage(req, res) {
    
 
     try {
-        const url = `https://graph.facebook.com/v20.0/${our_number}/messages`;
-        const accessToken = 'EAAwzliYKTZBwBO65SDKzG1KVx0LdkGxYSXOWV8DCscUbwBXEnQCm0a8WgKcTYNMZBCtRRlfGslSt3kzwaKtiXqUPtSrmKSMPzWVq3aKGYM9bHrlwbQ5igZCqlQem769DiHHPt1BxKDQ3aIcTZBN1IVnK02ZBAS0HxEBzhj5nZAqDsWyGqYGfHY10tvJdgmTDqWFQZDZD';
+        const url = `${our_number}/messages`;
         const data = {
             messaging_product: 'whatsapp',
             recipient_type: 'individual',
@@ -26,12 +26,7 @@ export async function sendMessage(req, res) {
             }
         };
 
-        const response = await axios.post(url, data, {
-            params: {
-                access_token: accessToken
-            }
-        });
-
+        const response = await api.post(url, data) 
         console.log(response)
 
         const envio = await pool.query('INSERT INTO message (idChat, sender, message) VALUES (?, 1, ?)', [idChat, message])
