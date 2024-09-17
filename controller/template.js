@@ -10,5 +10,7 @@ export const createTemplate = async (req, res) => {
     
     const response = await api.post(url, body)
 
+    console.log(response)
+
     res.status(200).json(response)
 }
