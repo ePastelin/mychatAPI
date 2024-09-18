@@ -23,3 +23,12 @@ export const getChatDetails = async (pool, chatId) => {
 export const updateMessageStatus = async (pool, idMessage, status) => {
     await pool.query('UPDATE message SET status = ? WHERE id = ?', [status, idMessage]);
 }
+
+export const createChats = async (body) => {
+
+    const {id, ourNumber, socioNumber, chatType, lastMessage, socioName} = body
+
+    await pool.query('INSERT INTO chat (id, our_number, socio_number, chat_type, last_message, socio_name) VALUES (?, ?, ?, ?, ?, ?)', 
+        [id, ourNumber, socioNumber, chatType, lastMessage, socioName]
+    )
+}
