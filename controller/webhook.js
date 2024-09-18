@@ -14,7 +14,11 @@ export const verificar = (req, res) => {
 export const recibir = async (req, res) => {
     try {
         console.log(req.body)
+
+
         const { messages, statuses } = req.body.entry[0].changes[0].value || {};
+        console.log(req.body.entry[0].changes[0])
+        console.log(req.body.entry[0].changes[0].value)
         if (statuses) await updateMessageStatus(statuses);
         if (messages) await processIncomingMessage(req.body);
     } catch (error) {
