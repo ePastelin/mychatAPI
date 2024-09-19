@@ -41,7 +41,7 @@ export const createTemplate = async (req, res) => {
             'SELECT id FROM languages WHERE language_code = ?', [language]
         );
         
-        const language_id = languageResult[0];
+        const language_id = languageResult[0][0].id;
         console.log(language_id)
 
         console.log(category)
@@ -49,7 +49,7 @@ export const createTemplate = async (req, res) => {
             'SELECT id FROM categories WHERE value = ?', [category]
         );
 
-        const category_id = categoryResult[0];
+        const category_id = categoryResult[0][0].id;
 
         console.log(category_id)
 
