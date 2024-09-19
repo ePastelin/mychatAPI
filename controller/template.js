@@ -41,14 +41,14 @@ export const createTemplate = async (req, res) => {
             'SELECT id FROM languages WHERE language_code = ?', [language]
         );
         
-        const language_id = languageResult[0].id;
+        const language_id = languageResult[0];
 
         console.log(category)
         const categoryResult = await pool.query(
             'SELECT id FROM categories WHERE value = ?', [category]
         );
 
-        const category_id = categoryResult[0].id;
+        const category_id = categoryResult[0];
 
         const insertResult = await pool.query(
             `INSERT INTO templates (id, name, category_id, language_id, content, buttons, status_id) 
