@@ -1,6 +1,6 @@
 import { pool } from "../database/config";
 
-const updateTemplateStatus = async (id, status) => {
+export const updateTemplateStatus = async (id, status) => {
     const sql = `
       UPDATE templates
       SET status_id = (SELECT id FROM templateStatus WHERE value = ?)

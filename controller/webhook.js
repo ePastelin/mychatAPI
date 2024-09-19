@@ -1,4 +1,5 @@
 import { processIncomingMessage, updateMessageStatus } from '../services/messageService.js';
+import { updateTemplateStatus } from '../services/templateService.js';
 
 export const verificar = (req, res) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
