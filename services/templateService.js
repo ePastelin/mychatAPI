@@ -1,4 +1,4 @@
-import { pool } from "../database/config";
+import { pool } from "../database/config.js";
 
 export const updateTemplateStatus = async (id, status) => {
     const sql = `
