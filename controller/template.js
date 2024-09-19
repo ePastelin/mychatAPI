@@ -35,12 +35,15 @@ export const createTemplate = async (req, res) => {
 
         const {status, id, category} = data
 
+
+        console.log(language)
         const languageResult = await pool.query(
             'SELECT id FROM languages WHERE language_code = ?', [language]
         );
         
         const language_id = languageResult.rows[0].id;
 
+        console.log(category)
         const categoryResult = await pool.query(
             'SELECT id FROM categories WHERE value = ?', [category]
         );
