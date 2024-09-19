@@ -9,7 +9,7 @@ export const createTemplate = async (req, res) => {
         let footerText = '';
         let buttonsJson = null;
 
-        const { name, category, language, components } = body
+        const { name, language, components } = body
 
         components.forEach(component => {
             if (component.type === 'HEADER') {
@@ -25,14 +25,14 @@ export const createTemplate = async (req, res) => {
             }
           });
 
-        const content = `${header}\n${body}\n${footer}`
+        const content = `${headerText}\n${bodyText}\n${footerText}`
          
 
         console.log(body);
 
         const { data } = await api.post(url, body);
 
-        const {status, id} = data
+        const {status, id, category} = data
 
         const languageResult = await pool.query(
             'SELECT id FROM languages WHERE language_code = ?', [language]
@@ -41,7 +41,7 @@ export const createTemplate = async (req, res) => {
         const language_id = languageResult.rows[0].id;
 
         const categoryResult = await pool.query(
-            'SELECT id FROM categories WHERE value = ?', [status]
+            'SELECT id FROM categories WHERE value = ?', [category]
         );
 
         const category_id = categoryResult.rows[0].id;
