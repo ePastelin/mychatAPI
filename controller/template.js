@@ -8,7 +8,7 @@ export const createTemplate = async (req, res) => {
         let headerText = '';
         let bodyText = '';
         let footerText = '';
-        let buttonsJson = null;
+        let buttons = null;
 
         const { name, language, components } = body
 
@@ -22,7 +22,7 @@ export const createTemplate = async (req, res) => {
               footerText = component.text;
             }
             else if (component.type === 'BUTTONS') {
-              buttonsJson = component.buttons;
+              buttons = component.buttons;
             }
           });
 
