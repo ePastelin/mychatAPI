@@ -1,4 +1,5 @@
-import api from "../helpers/axios.js";
+import api from "../helpers/axios.js"
+import { pool } from "../database/config.js";
 
 export const createTemplate = async (req, res) => {
         const { body } = req;
