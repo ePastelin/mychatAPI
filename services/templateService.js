@@ -1,3 +1,5 @@
+import { pool } from "../database/config";
+
 const updateTemplateStatus = async (id, status) => {
     const sql = `
       UPDATE templates
