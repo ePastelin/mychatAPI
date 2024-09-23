@@ -1,4 +1,5 @@
 import api from "../helpers/axios.js"
+import replaceVariables from "../helpers/replaceVariables.js";
 import { pool } from "../database/config.js";
 
 const metaId = process.env.META_ID;
@@ -14,18 +15,26 @@ export const createTemplate = async (req, res) => {
         const { name, language, components } = body
 
         components.forEach(component => {
-            if (component.type === 'HEADER') {
-              headerText = component.text;
-            } else if (component.type === 'BODY') {
-              bodyText = component.text;
-            }
-            else if (component.type === 'FOOTER') {
+          if (component.type === 'HEADER') {
+              // Reemplazar variables en el HEADER usando el ejemplo
+              if (component.example && component.example.header_text) {
+                  headerText = replaceVariables(component.text, component.example.header_text);
+              } else {
+                  headerText = component.text;
+              }
+          } else if (component.type === 'BODY') {
+              // Reemplazar variables en el BODY usando el ejemplo
+              if (component.example && component.example.body_text) {
+                  bodyText = replaceVariables(component.text, component.example.body_text[0]); // Usar el primer array en el ejemplo
+              } else {
+                  bodyText = component.text;
+              }
+          } else if (component.type === 'FOOTER') {
               footerText = component.text;
-            }
-            else if (component.type === 'BUTTONS') {
+          } else if (component.type === 'BUTTONS') {
               buttons = component.buttons;
-            }
-          });
+          }
+      });
 
         const content = `${headerText}\n${bodyText}\n${footerText}`
          
@@ -55,9 +64,9 @@ export const createTemplate = async (req, res) => {
         console.log(category_id)
 
         const insertResult = await pool.query(
-            `INSERT INTO templates (id, name, category_id, language_id, content, buttons, status_id) 
+            `INSERT INTO templates (id, name, category_id, language_id, header, body, footer buttons, status_id, content) 
             VALUES (?, ?, ?, ?, ?, ?, 1)`,
-            [id, name, category_id, language_id, content, JSON.stringify(buttons)]
+            [id, name, category_id, language_id, headerText, bodyText, footerText , JSON.stringify(buttons), content]
         );
 
         // Asegúrate de que 'data' no sea undefined o null antes de continuar
