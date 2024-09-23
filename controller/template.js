@@ -81,11 +81,11 @@ export const getTemplate = async (req, res) => {
   const template = data[0]
 
   console.log(template)
-  res.status(200).json(template)
+  return res.status(200).json(template)
 
   } catch(error) {
     console.log(error)
-    res.status(500)
+    return res.status(500)
   }
   }
 
@@ -112,11 +112,11 @@ export const sendTemplate = async (req, res) => {
             [idMessage, idChat, 1, message, 'delivered'])
 
 
-    res.status(201)
+    return res.status(201)
   } catch (error) {
     console.log(error)
 
-    res.status(500)
+    return res.status(500)
   }
 
 }
@@ -127,10 +127,10 @@ export const getTemplates = async (req, res) => {
   const { data } = await api.get(url)
 
   console.log(data)
-  res.status(200).json(data)
+  return res.status(200).json(data)
 
   } catch(error) {
     console.log(error)
-    res.status(500)
+    return res.status(500)
   }
 }
