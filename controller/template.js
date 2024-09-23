@@ -95,19 +95,19 @@ export const sendTemplate = async (req, res) => {
     const { message, socioName, ourNumber} = database
     const url = `${ourNumber}/messages`
 
-    const response = api.post(url, whatsapp)
+    const response = await api.post(url, whatsapp)
     const idMessage = response.messages[0].id
     const socioNumber = response.contacts[0].input
     console.log(response)
     console.log(idMessage)
 
-    const [chatRes] = pool.query(`INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name) 
+    const [chatRes] = await pool.query(`INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name) 
             VALUES (?, ?, ?, ?, ?)`,
             [ourNumber, socioNumber, 1, message, socioName])
 
     const idChat = chatRes.insertId
 
-    const [messageRes] = pool.query(`INSERT INTO message (id, idChat, sender, message, status) 
+    const [messageRes] = await pool.query(`INSERT INTO message (id, idChat, sender, message, status) 
             VALUES (?, ?, ?, ?, ?)`,
             [idMessage, idChat, 1, message, 'delivered'])
 
