@@ -90,7 +90,6 @@ export const getTemplate = async (req, res) => {
   }
 
 export const sendTemplate = async (req, res) => {
-  try {
     const { whatsapp, database } = req.body
     const { message, socioName, ourNumber} = database
     const url = `${ourNumber}/messages`
@@ -113,11 +112,7 @@ export const sendTemplate = async (req, res) => {
 
 
     return res.status(201)
-  } catch (error) {
-    console.log(error)
-
-    return res.status(500)
-  }
+  
 
 }
 
