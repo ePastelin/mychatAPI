@@ -25,7 +25,7 @@ export const createTemplate = async (req, res) => {
           } else if (component.type === 'BODY') {
               // Reemplazar variables en el BODY usando el ejemplo
               if (component.example && component.example.body_text) {
-                  bodyText = replaceVariables(component.text, component.example.body_text[0]); // Usar el primer array en el ejemplo
+                  bodyText = replaceVariables(component.text, component.example.body_text); // Usar el primer array en el ejemplo
               } else {
                   bodyText = component.text;
               }
