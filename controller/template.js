@@ -1,9 +1,10 @@
 import api from "../helpers/axios.js"
 import { pool } from "../database/config.js";
 
+const metaId = process.env.META_ID;
+
 export const createTemplate = async (req, res) => {
         const { body } = req;
-        const metaId = process.env.META_ID;
         const url = `${metaId}/message_templates`;
         let headerText = '';
         let bodyText = '';
@@ -69,3 +70,67 @@ export const createTemplate = async (req, res) => {
         return res.status(200).json(data);  // Responde solo con la data relevante
 
 };
+
+export const getTemplate = async (req, res) => {
+
+  try {
+  const { name } = req.params
+  const url = `${metaId}/message_templates?name=${name}`
+
+  const { data } = await api.get(url)
+  const template = data[0]
+
+  console.log(template)
+  res.status(200).json(template)
+
+  } catch(error) {
+    console.log(error)
+    res.status(500)
+  }
+  }
+
+export const sendTemplate = async (req, res) => {
+  try {
+    const { whatsapp, database } = req.body
+    const { message, socioName, ourNumber} = database
+    const url = `${ourNumber}/messages`
+
+    const response = api.post(url, whatsapp)
+    const idMessage = response.messages[0].id
+    const socioNumber = response.contacts[0].input
+    console.log(response)
+    console.log(idMessage)
+
+    const [chatRes] = pool.query(`INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name) 
+            VALUES (?, ?, ?, ?, ?)`,
+            [ourNumber, socioNumber, 1, message, socioName])
+
+    const idChat = chatRes.insertId
+
+    const [messageRes] = pool.query(`INSERT INTO message (id, idChat, sender, message, status) 
+            VALUES (?, ?, ?, ?, ?)`,
+            [idMessage, idChat, 1, message, 'delivered'])
+
+
+    res.status(201)
+  } catch (error) {
+    console.log(error)
+
+    res.status(500)
+  }
+
+}
+
+export const getTemplates = async (req, res) => {
+  try {
+  const url = `${metaId}/message_templates`
+  const { data } = await api.get(url)
+
+  console.log(data)
+  res.status(200).json(data)
+
+  } catch(error) {
+    console.log(error)
+    res.status(500)
+  }
+}
