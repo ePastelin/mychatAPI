@@ -120,11 +120,10 @@ export const sendTemplate = async (req, res) => {
 
 export const getTemplates = async (req, res) => {
   try {
-  const url = `${metaId}/message_templates`
-  const { data } = await api.get(url)
+  const [templates] = await pool.query('SELECT t.id, t.name, c.name AS category_name, l.name AS language_name, ts.name AS status_name, t.allow_category_change, t.created_at, t.updated_at, t.content, t.buttons FROM templates t JOIN categories c ON t.category_id = c.id JOIN languages l ON t.language_id = l.id JOIN templateStatus ts ON t.status_id = ts.id')
 
-  console.log(data)
-  return res.status(200).json(data)
+  console.log(templates)
+  return res.status(200).json(templates)
 
   } catch(error) {
     console.log(error)
