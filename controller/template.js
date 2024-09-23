@@ -95,6 +95,8 @@ export const sendTemplate = async (req, res) => {
     const url = `${ourNumber}/messages`
 
     const response = await api.post(url, whatsapp)
+    console.log(response)
+    console.log(idMessage)
     const idMessage = response.messages[0].id
     const socioNumber = response.contacts[0].input
     console.log(response)
