@@ -103,12 +103,11 @@ export const getTemplate = async (req, res) => {
   try {
   const { id } = req.params
 
-  const [result] = pool.query('Select * ')
-  console.log('this is my data', data)
-  const template = data[0]
+  const [result] = await pool.query(`SELECT t.*, l.language_code FROM templates t JOIN languages l ON t.language_id = l.id WHERE t.id = ?`, [id]);
 
-  console.log(template)
-  return res.status(200).json(template)
+  console.log('this is my data', result)
+
+  return res.status(200).json(result)
 
   } catch(error) {
     console.log(error)
