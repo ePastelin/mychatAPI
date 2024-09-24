@@ -85,10 +85,11 @@ export const getTemplate = async (req, res) => {
   try {
   const { name } = req.params
 
-  console.log(req.params, name)
+  console.log(req.params, name, 'this are my params')
   const url = `${metaId}/message_templates?name=${name}`
 
   const { data } = await api.get(url)
+  console.log('this is my data', data)
   const template = data[0]
 
   console.log(template)
