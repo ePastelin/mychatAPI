@@ -6,7 +6,7 @@ const router = Router()
 router.post('/create', jwtValidator, createTemplate)
 router.post('/', jwtValidator, sendTemplate)
 router.get('/', jwtValidator, getTemplates)
-router.get('/:name', jwtValidator, getTemplate)
+router.get('/:id', jwtValidator, getTemplate)
 
 export default router
 
