@@ -139,7 +139,7 @@ export const sendTemplate = async (req, res) => {
             [idMessage, idChat, 1, message, 'delivered'])
 
 
-    return res.status(201)
+    return res.status(200).json({ok: true})
   
 
 }
