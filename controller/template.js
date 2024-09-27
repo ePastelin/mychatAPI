@@ -82,9 +82,9 @@ export const createTemplate = async (req, res) => {
         console.log(category_id)
 
         const insertResult = await pool.query(
-            `INSERT INTO templates (id, name, category_id, language_id, header, body, footer, buttons, header_examples, body_examples, status_id, content) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)`,
-            [id, name, category_id, language_id, headerText, bodyText, footerText, JSON.stringify(buttons), JSON.stringify(headerExamples), JSON.stringify(bodyExamples), content]
+            `INSERT INTO templates (id, name, category_id, language_id, header, body, footer, buttons, header_examples, body_examples, status_id, content, body_variables, header_variables) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
+            [id, name, category_id, language_id, headerText, bodyText, footerText, JSON.stringify(buttons), JSON.stringify(headerExamples), JSON.stringify(bodyExamples), content, originalBodyText, originalHeaderText]
           );
 
         // Asegúrate de que 'data' no sea undefined o null antes de continuar
