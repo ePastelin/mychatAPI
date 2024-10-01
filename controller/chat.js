@@ -43,23 +43,25 @@ export async function getChats(req, res) {
 
     const userId = req.id
     try {
-        const [rows] = await pool.query(
-            "SELECT COALESCE(GROUP_CONCAT(n.number_id SEPARATOR ','), '') AS phone_numbers FROM users_numbers n WHERE n.user_id = ?",
-            [userId]
-          );
+        // const [rows] = await pool.query(
+        //     "SELECT COALESCE(GROUP_CONCAT(n.number_id SEPARATOR ','), '') AS phone_numbers FROM users_numbers n WHERE n.user_id = ?",
+        //     [userId]
+        //   );
 
-        const phoneNumbers = rows[0].phone_numbers ? rows[0].phone_numbers.split(',') : []
+        // const phoneNumbers = rows[0].phone_numbers ? rows[0].phone_numbers.split(',') : []
 
-        console.log(phoneNumbers)
+        // console.log(phoneNumbers)
 
-        const [chats] = await pool.query(`
-            SELECT c.*
-            FROM chat c
-            JOIN number n ON c.our_number = n.idnumber
-            WHERE n.idnumber IN (?)
-          `, [phoneNumbers]);
+        // const [chats] = await pool.query(`
+        //     SELECT c.*
+        //     FROM chat c
+        //     JOIN number n ON c.our_number = n.idnumber
+        //     WHERE n.idnumber IN (?)
+        //   `, [phoneNumbers]);
 
-        res.json({phoneNumbers, chats})
+        const [ chats ] = await pool.query(`SELECT * FROM chat WHERE user = ?`, [userId])
+
+        res.json({chats})
     } catch(error) {
         console.error(error)
         res.status(500).json({error})
