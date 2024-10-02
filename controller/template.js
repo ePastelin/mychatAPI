@@ -158,11 +158,10 @@ export const getTemplate = async (req, res) => {
             [idMessage, idChat, 1, message, 'delivered']
           );
 
-          const [chatRes] = await pool.query(
-            `INSERT INTO chat (last_message) 
-             VALUES (?)`,
-            [message]
-          );
+          const saving = await pool.query(
+            'UPDATE chat SET last_message = ?, last_date = NOW() WHERE id = ?', 
+            [message, idChat]
+        );
 
           console.log(isInsertWell, idChat, idMessage)
       
