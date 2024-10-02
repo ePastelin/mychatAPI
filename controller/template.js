@@ -120,12 +120,15 @@ export const getTemplate = async (req, res) => {
     const { message, socioName, ourNumber } = database;
     const { id } = req; // ID del usuario
     const url = `${ourNumber}/messages`;
+
+
+    const socioNumber = whatsapp.to
+
+    console.log(req.body, socioNumber)
   
     try {
       // Enviar el mensaje a través de la API de WhatsApp
-      const { data } = await api.post(url, whatsapp);
-      const idMessage = data.messages[0].id;
-      const socioNumber = data.contacts[0].input;
+
   
       // Verificar si ya existe un chat entre nuestro número y el socio
       const [existingChat] = await pool.query(
@@ -146,15 +149,17 @@ export const getTemplate = async (req, res) => {
         }
       } else {
         // Si no existe el chat, creamos uno nuevo
+        const { data } = await api.post(url, whatsapp);
+        const idMessage = data.messages[0].id;
+
         const [chatRes] = await pool.query(
           `INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name, user) 
            VALUES (?, ?, ?, ?, ?, ?)`,
           [ourNumber, socioNumber, 1, message, socioName, id]
         );
         idChat = chatRes.insertId;
-      }
-  
-      // Insertar el mensaje en la base de datos
+
+              // Insertar el mensaje en la base de datos
       await pool.query(
         `INSERT INTO message (id, idChat, sender, message, status) 
          VALUES (?, ?, ?, ?, ?)`,
@@ -162,6 +167,9 @@ export const getTemplate = async (req, res) => {
       );
   
       return res.status(200).json({ ok: true });
+      }
+  
+
     } catch (error) {
       console.error("Error al enviar el mensaje:", error);
       return res.status(500).json({ ok: false, error: error.message });
