@@ -150,11 +150,13 @@ export const getTemplate = async (req, res) => {
           const { data } = await api.post(url, whatsapp);
           const idMessage = data.messages[0].id;
 
-          await pool.query(
+          const isInsertWell = await pool.query(
             `INSERT INTO message (id, idChat, sender, message, status) 
              VALUES (?, ?, ?, ?, ?)`,
             [idMessage, idChat, 1, message, 'delivered']
           );
+
+          console.log(isInsertWell, idChat, idMessage)
       
           return res.status(200).json({ ok: true });
         }
