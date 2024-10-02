@@ -129,7 +129,7 @@ export const getTemplate = async (req, res) => {
   
       // Verificar si ya existe un chat entre nuestro número y el socio
       const [existingChat] = await pool.query(
-        `SELECT idChat, user FROM chat WHERE our_number = ? AND socio_number = ? LIMIT 1`,
+        `SELECT id, user FROM chat WHERE our_number = ? AND socio_number = ? LIMIT 1`,
         [ourNumber, socioNumber]
       );
   
