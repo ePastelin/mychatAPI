@@ -149,6 +149,7 @@ export const getTemplate = async (req, res) => {
         } else {
           const { data } = await api.post(url, whatsapp);
           const idMessage = data.messages[0].id;
+          idChat = existingChat[0].idChat;
           console.log("Aquí el idMessage", idMessage)
           console.log("Aquí el idChat", idChat)
 
@@ -166,7 +167,6 @@ export const getTemplate = async (req, res) => {
         // Si no existe el chat, creamos uno nuevo
         const { data } = await api.post(url, whatsapp);
         const idMessage = data.messages[0].id;
-        console.log(idMessage)
 
         const [chatRes] = await pool.query(
           `INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name, user) 
