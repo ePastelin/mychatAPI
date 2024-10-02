@@ -158,6 +158,12 @@ export const getTemplate = async (req, res) => {
             [idMessage, idChat, 1, message, 'delivered']
           );
 
+          const [chatRes] = await pool.query(
+            `INSERT INTO chat (last_message) 
+             VALUES (?)`,
+            [message]
+          );
+
           console.log(isInsertWell, idChat, idMessage)
       
           return res.status(200).json({ ok: true });
