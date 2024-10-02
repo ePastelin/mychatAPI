@@ -146,6 +146,17 @@ export const getTemplate = async (req, res) => {
         if (chatOwner !== id) {
           // Si el usuario no es el propietario del chat, no puede enviar mensajes
           return res.status(403).json({ ok: false, message: 'No tienes permiso para enviar mensajes en este chat' });
+        } else {
+          const { data } = await api.post(url, whatsapp);
+          const idMessage = data.messages[0].id;
+
+          await pool.query(
+            `INSERT INTO message (id, idChat, sender, message, status) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [idMessage, idChat, 1, message, 'delivered']
+          );
+      
+          return res.status(200).json({ ok: true });
         }
       } else {
         // Si no existe el chat, creamos uno nuevo
