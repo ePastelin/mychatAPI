@@ -115,35 +115,59 @@ export const getTemplate = async (req, res) => {
   }
   }
 
-export const sendTemplate = async (req, res) => {
-    const { whatsapp, database } = req.body
-    const { message, socioName, ourNumber} = database
-    const { id } = req
-    const url = `${ourNumber}/messages`
-
-    const { data } = await api.post(url, whatsapp)
-    console.log(data)
-    const idMessage = data.messages[0].id
-    console.log(idMessage)
-    const socioNumber = data.contacts[0].input
-    console.log(data)
-    console.log(idMessage)
-
-    const [chatRes] = await pool.query(`INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name, user) 
-            VALUES (?, ?, ?, ?, ?, ?)`,
-            [ourNumber, socioNumber, 1, message, socioName, id])
-
-    const idChat = chatRes.insertId
-
-    const [messageRes] = await pool.query(`INSERT INTO message (id, idChat, sender, message, status) 
-            VALUES (?, ?, ?, ?, ?)`,
-            [idMessage, idChat, 1, message, 'delivered'])
-
-
-    return res.status(200).json({ok: true})
+  export const sendTemplate = async (req, res) => {
+    const { whatsapp, database } = req.body;
+    const { message, socioName, ourNumber } = database;
+    const { id } = req; // ID del usuario
+    const url = `${ourNumber}/messages`;
   
-
-}
+    try {
+      // Enviar el mensaje a través de la API de WhatsApp
+      const { data } = await api.post(url, whatsapp);
+      const idMessage = data.messages[0].id;
+      const socioNumber = data.contacts[0].input;
+  
+      // Verificar si ya existe un chat entre nuestro número y el socio
+      const [existingChat] = await pool.query(
+        `SELECT idChat, user FROM chat WHERE our_number = ? AND socio_number = ? LIMIT 1`,
+        [ourNumber, socioNumber]
+      );
+  
+      let idChat;
+  
+      if (existingChat.length > 0) {
+        // Si existe el chat, verificamos si el usuario es el mismo
+        const chatOwner = existingChat[0].user;
+        idChat = existingChat[0].idChat;
+  
+        if (chatOwner !== id) {
+          // Si el usuario no es el propietario del chat, no puede enviar mensajes
+          return res.status(403).json({ ok: false, message: 'No tienes permiso para enviar mensajes en este chat' });
+        }
+      } else {
+        // Si no existe el chat, creamos uno nuevo
+        const [chatRes] = await pool.query(
+          `INSERT INTO chat (our_number, socio_number, chat_type, last_message, socio_name, user) 
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [ourNumber, socioNumber, 1, message, socioName, id]
+        );
+        idChat = chatRes.insertId;
+      }
+  
+      // Insertar el mensaje en la base de datos
+      await pool.query(
+        `INSERT INTO message (id, idChat, sender, message, status) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [idMessage, idChat, 1, message, 'delivered']
+      );
+  
+      return res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+      return res.status(500).json({ ok: false, error: error.message });
+    }
+  };
+  
 
 export const getTemplates = async (req, res) => {
   try {
