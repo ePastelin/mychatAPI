@@ -141,7 +141,7 @@ export const getTemplate = async (req, res) => {
       if (existingChat.length > 0) {
         // Si existe el chat, verificamos si el usuario es el mismo
         const chatOwner = existingChat[0].user;
-        idChat = existingChat[0].idChat;
+        idChat = existingChat[0].id;
   
         if (chatOwner !== id) {
           // Si el usuario no es el propietario del chat, no puede enviar mensajes
@@ -149,7 +149,6 @@ export const getTemplate = async (req, res) => {
         } else {
           const { data } = await api.post(url, whatsapp);
           const idMessage = data.messages[0].id;
-          idChat = existingChat[0].idChat;
           console.log("Aquí el idMessage", idMessage)
           console.log("Aquí el idChat", idChat)
 
