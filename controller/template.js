@@ -149,6 +149,8 @@ export const getTemplate = async (req, res) => {
         } else {
           const { data } = await api.post(url, whatsapp);
           const idMessage = data.messages[0].id;
+          console.log("Aquí el idMessage", idMessage)
+          console.log("Aquí el idChat", idChat)
 
           const isInsertWell = await pool.query(
             `INSERT INTO message (id, idChat, sender, message, status) 
