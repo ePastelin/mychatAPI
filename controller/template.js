@@ -206,9 +206,9 @@ export const getTemplates = async (req, res) => {
 
   const result = {
     templates,
-    languages: languages.map(lang => lang.name),
-    categories: categories.map(cat => cat.name),
-    status: status.map(stat => stat.name)
+    languages: languages.map(lang => ({ value: lang.name, label: lang.name })),
+    categories: categories.map(cat => ({ value: cat.name, label: cat.name })),
+    status: status.map(stat => ({ value: stat.name, label: stat.name }))
   };
 
 
