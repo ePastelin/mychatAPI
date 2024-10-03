@@ -200,9 +200,20 @@ export const getTemplate = async (req, res) => {
 export const getTemplates = async (req, res) => {
   try {
   const [templates] = await pool.query('SELECT t.id, t.name, c.name AS category_name, l.name AS language_name, ts.name AS status_name, t.allow_category_change, t.created_at, t.updated_at, t.content, t.buttons, t.header, t.body, t.footer FROM templates t JOIN categories c ON t.category_id = c.id JOIN languages l ON t.language_id = l.id JOIN templateStatus ts ON t.status_id = ts.id')
+  const [languages] = await pool.query('SELECT name FROM languages')
+  const [categories] = await pool.query('SELECT name FROM categories')
+  const [status] = await pool.query('SELECT name FROM templateStatus')
+
+  const result = {
+    templates,
+    languages,
+    categories,
+    status
+  }
+
 
   console.log(templates)
-  return res.status(200).json(templates)
+  return res.status(200).json(result)
 
   } catch(error) {
     console.log(error)
