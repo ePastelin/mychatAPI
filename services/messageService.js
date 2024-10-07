@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { pool } from '../database/config.js';
+import api from '../helpers/axios.js';
 import formatDate from '../helpers/formatDate.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
@@ -31,7 +33,20 @@ export const processIncomingMessage = async (body) => {
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
 
-        if (messages[0].type === 'image') console.log(messages[0].image) 
+        if (messages[0].type === 'image') {
+            const imageId = messages[0].image.id
+            console.log('imageId', imageId)
+            const response = api(imageId)
+            console.log('first petition', response)
+
+            const imageUrl = response.url
+
+            const imageResponse = axios.get(imageUrl, {
+                responseType: 'arraybuffer'
+            }) 
+
+            console.log(imageResponse, 'image response')
+        } 
 
         const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
         const idChat = rows[0].id;
