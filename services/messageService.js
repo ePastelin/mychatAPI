@@ -45,7 +45,7 @@ export const processIncomingMessage = async (body) => {
                 responseType: 'arraybuffer'
             }) 
 
-            console.log(imageResponse, 'image response')
+            console.log(imageResponse.data, 'image response')
         } 
 
         const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
