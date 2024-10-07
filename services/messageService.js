@@ -33,6 +33,13 @@ export const processIncomingMessage = async (body) => {
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
 
+        
+
+        const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
+        const idChat = rows[0].id;
+        const { id: idMessage, text } = messages[0];
+        const message = text.body;
+
         if (messages[0].type === 'image') {
             const imageId = messages[0].image.id
             console.log('imageId', imageId)
@@ -46,12 +53,10 @@ export const processIncomingMessage = async (body) => {
             }) 
 
             console.log(imageResponse.data, 'image response')
-        } 
 
-        const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
-        const idChat = rows[0].id;
-        const { id: idMessage, text } = messages[0];
-        const message = text.body;
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, imageResponse, 1]);
+            return
+        } 
 
         const [existingMessage] = await pool.query('SELECT * FROM message WHERE id = ?', [idMessage]);
         if (existingMessage.length > 0) {
