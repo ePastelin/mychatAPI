@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { pool } from '../database/config.js';
-import api from '../helpers/axios.js';
+import api, { apiImage } from '../helpers/axios.js';
 import formatDate from '../helpers/formatDate.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
@@ -41,7 +41,7 @@ export const processIncomingMessage = async (body) => {
 
             const imageUrl = response.data.url
 
-            const imageResponse = await axios.get(imageUrl, {
+            const imageResponse = await apiImage.get(imageUrl, {
                 responseType: 'arraybuffer'
             }) 
 

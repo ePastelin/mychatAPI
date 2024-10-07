@@ -9,4 +9,11 @@ export const api = axios.create({
     }
   });
 
+export const apiImage = axios.create({
+  baseURL: '',
+  headers: {
+    Authorization: `Bearer ${access_token}`
+  }
+})
+
   export default api
