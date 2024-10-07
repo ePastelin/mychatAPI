@@ -36,12 +36,12 @@ export const processIncomingMessage = async (body) => {
         if (messages[0].type === 'image') {
             const imageId = messages[0].image.id
             console.log('imageId', imageId)
-            const response = api(imageId)
+            const response = await api(imageId)
             console.log('first petition', response)
 
             const imageUrl = response.url
 
-            const imageResponse = axios.get(imageUrl, {
+            const imageResponse = await axios.get(imageUrl, {
                 responseType: 'arraybuffer'
             }) 
 
