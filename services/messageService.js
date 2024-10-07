@@ -31,6 +31,8 @@ export const processIncomingMessage = async (body) => {
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
 
+        if (messages[0].type === 'image') console.log(messages[0].image) 
+
         const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
         const idChat = rows[0].id;
         const { id: idMessage, text } = messages[0];
