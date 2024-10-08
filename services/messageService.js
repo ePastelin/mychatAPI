@@ -53,7 +53,8 @@ export const processIncomingMessage = async (body) => {
 
             console.log(imageResponse.data, 'image response')
 
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, ?)', [idMessage, idChat, imageResponse, 1]);
+            console.log(idMessage, idChat)
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, imageResponse]);
             return
         } 
 
