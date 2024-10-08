@@ -51,10 +51,13 @@ export const processIncomingMessage = async (body) => {
                 responseType: 'arraybuffer'
             }) 
 
+            console.log(imageResponse, 'without data')
             console.log(imageResponse.data, 'image response')
+    
+            const image = imageResponse.data
 
             console.log(idMessage, idChat)
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, imageResponse]);
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, image]);
             return
         } 
 
