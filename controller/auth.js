@@ -7,7 +7,7 @@ export const createUser = async (req, res) => {
     const { body } = req;
     const { phone_numbers, ...userDetails } = body;
 
-    if (!userDetails.username || !userDetails.role_id || !userDetails.password) {
+    if (!userDetails.username || !userDetails.password) {
       return res.status(400).json({
         ok: false,
         message: 'Missing required fields',
