@@ -58,6 +58,12 @@ export const processIncomingMessage = async (body) => {
 
             console.log(idMessage, idChat)
             await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, image]);
+
+            wss.clients.forEach(client => {
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: {data: imageResponse.data} }));
+                }
+            });
             return
         } 
 
