@@ -62,11 +62,13 @@ export const processIncomingMessage = async (body) => {
             console.log('info about document', messages[0].document)
             
             if (type === 'image') {
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, multimedia]);
+            const {mime_type} = messages[0].image
+            console.log(messages[0].image)
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1 }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
                 }
             });
             return 
@@ -78,7 +80,7 @@ export const processIncomingMessage = async (body) => {
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, filename: filename, mimeType: 5,  }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 5, filename: filename, mimeType: mime_type,  }));
                 }
             });
             return
