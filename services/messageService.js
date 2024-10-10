@@ -61,7 +61,7 @@ export const processIncomingMessage = async (body) => {
 
             console.log('info about document', messages[0].document)
             
-            if (type === 'image') {
+            if (type === 'image' || type === 'sticker') {
             const {mime_type} = messages[0].image
             console.log(messages[0].image)
             await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
