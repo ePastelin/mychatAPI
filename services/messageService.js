@@ -60,14 +60,29 @@ export const processIncomingMessage = async (body) => {
             const multimedia = multimediaResponse.data
 
             console.log('info about document', messages[0].document)
+            
+            if (type === 'image') {
             await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, multimedia]);
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1 }));
+                }
+            });
+            return 
+            }
+
+            if (type === 'document') {
+             const {filename, mime_type} = messages[0].documnet
+             await pool.query('INSERT INTO message (id, idChat, sender, media, type, filename, mimeType) VALUES (?, ?, 0, ?, 5, ?, ?)', [idMessage, idChat, multimedia, filename, mime_type]);
+
+            wss.clients.forEach(client => {
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, filename: filename, mimeType: 5,  }));
                 }
             });
             return
+            }
         } 
 
         const message = text.body;
