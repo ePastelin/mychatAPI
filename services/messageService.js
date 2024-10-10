@@ -59,7 +59,7 @@ export const processIncomingMessage = async (body) => {
     
             const multimedia = multimediaResponse.data
 
-            console.log(idMessage, idChat)
+            console.log('info about document', messages[0].document)
             await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, multimedia]);
 
             wss.clients.forEach(client => {
