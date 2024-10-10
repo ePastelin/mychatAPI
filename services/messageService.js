@@ -73,7 +73,7 @@ export const processIncomingMessage = async (body) => {
             }
 
             if (type === 'document') {
-             const {filename, mime_type} = messages[0].documnet
+             const {filename, mime_type} = messages[0].document
              await pool.query('INSERT INTO message (id, idChat, sender, media, type, filename, mimeType) VALUES (?, ?, 0, ?, 5, ?, ?)', [idMessage, idChat, multimedia, filename, mime_type]);
 
             wss.clients.forEach(client => {
