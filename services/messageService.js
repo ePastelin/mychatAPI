@@ -39,10 +39,11 @@ export const processIncomingMessage = async (body) => {
         const { id: idMessage, text } = messages[0];
         const { type } = messages[0]
 
-        if (type === 'image' || type === 'document') {
+        if (type === 'image' || type === 'document' || type === 'sticker') {
             let id
             if (type === 'image') { id = messages[0].image.id } 
             if (type === 'document') { id = messages[0].document.id } 
+            if (type === 'sticker') { id = messages[0].sticker.id } 
 
             console.log('id', id)
             const response = await api(id)
@@ -61,7 +62,7 @@ export const processIncomingMessage = async (body) => {
 
             console.log('info about document', messages[0].document)
             
-            if (type === 'image' || type === 'sticker') {
+            if (type === 'image') {
             const {mime_type} = messages[0].image
             console.log(messages[0].image)
             await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
@@ -72,6 +73,19 @@ export const processIncomingMessage = async (body) => {
                 }
             });
             return 
+            }
+
+            if (type === 'sticker') {
+            const {mime_type} = messages[0].sticker
+            console.log(messages[0].sticker)
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
+
+            wss.clients.forEach(client => {
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
+                }
+            });
+            return
             }
 
             if (type === 'document') {
