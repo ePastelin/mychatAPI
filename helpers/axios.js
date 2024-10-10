@@ -9,7 +9,7 @@ export const api = axios.create({
     }
   });
 
-export const apiImage = axios.create({
+export const apiMultimedia = axios.create({
   baseURL: '',
   headers: {
     Authorization: `Bearer ${access_token}`

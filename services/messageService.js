@@ -1,6 +1,5 @@
-import axios from 'axios';
 import { pool } from '../database/config.js';
-import api, { apiImage } from '../helpers/axios.js';
+import api, { apiMultimedia } from '../helpers/axios.js';
 import formatDate from '../helpers/formatDate.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
@@ -38,30 +37,34 @@ export const processIncomingMessage = async (body) => {
         const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
         const idChat = rows[0].id;
         const { id: idMessage, text } = messages[0];
+        const { type } = messages[0]
 
-        if (messages[0].type === 'image') {
-            const imageId = messages[0].image.id
-            console.log('imageId', imageId)
-            const response = await api(imageId)
+        if (type === 'image' || type === 'document') {
+            let id
+            if (type === 'image') { id = messages[0].image.id } 
+            if (type === 'document') { id = messages[0].document.id } 
+
+            console.log('id', id)
+            const response = await api(id)
             console.log('first petition', response)
 
-            const imageUrl = response.data.url
+            const {url} = response.data
 
-            const imageResponse = await apiImage.get(imageUrl, {
+            const multimediaResponse = await apiMultimedia.get(url, {
                 responseType: 'arraybuffer'
             }) 
 
-            console.log(imageResponse, 'without data')
-            console.log(imageResponse.data, 'image response')
+            console.log(multimediaResponse, 'without data')
+            console.log(multimediaResponse.data, 'image response')
     
-            const image = imageResponse.data
+            const multimedia = multimediaResponse.data
 
             console.log(idMessage, idChat)
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, image]);
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type) VALUES (?, ?, 0, ?, 1)', [idMessage, idChat, multimedia]);
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: imageResponse.data }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia }));
                 }
             });
             return
