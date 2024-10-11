@@ -1,5 +1,5 @@
 import axios from 'axios'
-import api from './axios.js';
+import api, { apiMultimedia } from './axios.js';
 
 export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`
@@ -30,7 +30,7 @@ export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => 
     formData.append('file', file); // Asegúrate de que 'file' es un archivo (Blob o File)
     formData.append('messaging_product', 'whatsapp');
 
-    const response = await api.post(url, formData, {
+    const response = await apiMultimedia.post(url, formData, {
         headers: {
             'Content-Type': mimeType,
         }
