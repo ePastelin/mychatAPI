@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { getChatDetails, saveMessageToDatabase, updateMessageStatus } from '../helpers/querys.js';
-import { sendWhatsAppMessage } from '../helpers/whatsapp.js';
+import { sendMultimedia, sendWhatsAppMessage } from '../helpers/whatsapp.js';
 import formatDate from '../helpers/formatDate.js';
 
 const setupWebSocket = (server, pool) => {
@@ -30,6 +30,14 @@ const setupWebSocket = (server, pool) => {
                     const { our_number, socio_number } = await getChatDetails(pool, idChat);
 
                     // Enviar el mensaje a través de la API de WhatsApp
+
+                    if (parsedData.file) {
+                        const { file, mimeType } = parsedData
+                        sendMultimedia(our_number, socio_number, file, mimeType)
+
+                        console.log('Entré aquí')
+                    }
+
                     const messageId = await sendWhatsAppMessage(our_number, socio_number, message);
 
                     // Guardar el mensaje en la base de datos

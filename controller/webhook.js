@@ -18,8 +18,6 @@ export const recibir = async (req, res) => {
 
 
         const { messages, statuses, event, message_template_id } = req.body.entry[0].changes[0].value || {};
-        console.log(req.body.entry[0].changes[0])
-        console.log(req.body.entry[0].changes[0].value)
         if (event) await updateTemplateStatus(message_template_id, event)
         if (statuses) await updateMessageStatus(statuses);
         if (messages) await processIncomingMessage(req.body);
