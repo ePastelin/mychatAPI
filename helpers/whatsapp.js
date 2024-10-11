@@ -27,11 +27,7 @@ export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => 
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await apiMultimedia.post(url, formData, {
-        headers: {
-            'Content-Type': mimeType,
-        }
-    });
+    const response = await apiMultimedia.post(url, formData);
 
     console.log(response)
     
