@@ -27,10 +27,8 @@ export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => 
     console.log('Este es el file', file)
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/media?messaging_product=whatsapp`
 
-    formData.append('file', file); // Asegúrate de que 'file' es un archivo (Blob o File)
-    formData.append('messaging_product', 'whatsapp');
 
-    const response = await apiMultimedia.post(url, formData, {
+    const response = await apiMultimedia.post(url, {file}, {
         headers: {
             'Content-Type': mimeType,
         }
