@@ -22,6 +22,8 @@ export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
 }
 
 export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => {
+    const formData = new FormData(); // Inicializa FormData
+
     console.log('Este es el file', file)
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/media?messaging_product=whatsapp`
 
