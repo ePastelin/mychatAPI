@@ -36,6 +36,7 @@ const setupWebSocket = (server, pool) => {
                         sendMultimedia(our_number, socio_number, file, mimeType)
 
                         console.log('Entré aquí')
+                        return
                     }
 
                     const messageId = await sendWhatsAppMessage(our_number, socio_number, message);
