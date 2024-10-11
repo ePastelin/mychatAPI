@@ -22,19 +22,18 @@ export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
 }
 
 export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => {
-    const formData = new FormData(); // Inicializa FormData
-
-    console.log('Este es el file', file)
-    const url = `https://graph.facebook.com/v20.0/${ourNumber}/media?messaging_product=whatsapp`
-
-
-    const response = await apiMultimedia.post(url, {file}, {
+    const url = `https://graph.facebook.com/v20.0/${ourNumber}/media?messaging_product=whatsapp`;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await apiMultimedia.post(url, formData, {
         headers: {
-            'Content-Type': mimeType,
+            'Content-Type': 'multipart/form-data',
         }
     });
-    
-    console.log(response)
 
-    return response
-}
+    console.log(response)
+    
+    return response.data;
+};
