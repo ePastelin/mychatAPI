@@ -108,7 +108,22 @@ export async function sendMultimedia(req, res) {
         const response = await apiMultimedia.post(url, file)
         console.log(response)
     } catch(error) {
-        console.log(error.error)
+            // Accede al error de Axios para obtener detalles específicos
+    if (error.response) {
+        // El servidor respondió con un código de estado fuera del rango 2xx
+        console.log('Status:', error.response.status); // Código de estado HTTP
+        console.log('Headers:', error.response.headers); // Headers de la respuesta
+        console.log('Data:', JSON.stringify(error.response.data, null, 2)); // El objeto completo del error
+    } else if (error.request) {
+        // La petición fue hecha pero no hubo respuesta
+        console.log('Request:', error.request);
+    } else {
+        // Algo sucedió al configurar la solicitud que lanzó un error
+        console.log('Error Message:', error.message);
+    }
+
+    // Opcional: muestra el error completo en formato de string para ver toda su estructura
+    console.log('Error Config:', JSON.stringify(error.config, null, 2));
     }
 
 }
