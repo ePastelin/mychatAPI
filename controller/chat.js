@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { pool } from '../database/config.js';
-import api from '../helpers/axios.js';
+import api, { apiMultimedia } from '../helpers/axios.js';
+import { getChatDetails } from '../helpers/querys.js';
 
 export async function sendMessage(req, res) {
 
@@ -80,5 +81,24 @@ export async function getMessages(req, res) {
         console.error(error)
         res.status(500).json({error})
     }
+
+}
+
+export async function sendMultimedia(req, res) {
+
+    const {idChat, file} = req.body
+    const { our_number, socio_number } = await getChatDetails(pool, idChat) 
+
+    const url = `${our_number}/media?messaging_product=whatsapp`;
+
+    try {
+        const response = apiMultimedia.post(url, file)
+        console.log(response)
+    } catch(error) {
+        console.log(error)
+    }
+
+
+
 
 }
