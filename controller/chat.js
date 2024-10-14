@@ -105,7 +105,7 @@ export async function sendMultimedia(req, res) {
     const url = `${our_number}/media?messaging_product=whatsapp`;
 
     try {
-        const response = apiMultimedia.post(url, file)
+        const response = await apiMultimedia.post(url, file)
         console.log(response)
     } catch(error) {
     }
