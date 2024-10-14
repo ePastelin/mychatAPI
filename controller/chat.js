@@ -86,8 +86,8 @@ export async function getMessages(req, res) {
 
 export async function sendMultimedia(req, res) {
 
-    const {idChat, file} = req.body
-    console.log(file, req.body)
+    const {idChat, file} = req
+    console.log(file)
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
