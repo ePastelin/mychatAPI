@@ -100,12 +100,16 @@ export async function sendMultimedia(req, res) {
     }
 
     console.log('Theres file')
+
+    const formData = new FormData();
+formData.append('file', req.file.buffer, req.file.originalname);
+
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
 
     try {
-        const response = await apiMultimedia.post(url, {file})
+        const response = await apiMultimedia.post(url, formData)
         console.log(response)
     } catch(error) {
             // Accede al error de Axios para obtener detalles específicos
