@@ -10,9 +10,10 @@ export const api = axios.create({
   });
 
 export const apiMultimedia = axios.create({
-  baseURL: '',
+  baseURL: 'https://graph.facebook.com/v20.0/',
   headers: {
-    Authorization: `Bearer ${access_token}`
+    Authorization: `Bearer ${access_token}`,
+    'Content-Type': 'multipart/form-data'
   }
 })
 
