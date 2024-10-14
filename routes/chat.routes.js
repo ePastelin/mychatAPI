@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { getChats, getMessages, sendMessage, sendMultimedia } from '../controller/chat.js';
 import { jwtValidator } from '../middleware/jwtValidator.js';
+import multer from 'multer';
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage})
 
 const router = Router();
 
 router.post('/send', sendMessage);
-router.post('/send/multimedia', jwtValidator, sendMultimedia)
+router.post('/send/multimedia', jwtValidator, upload.single('file'), sendMultimedia)
 router.get('/', jwtValidator, getChats)
 router.get('/:id', jwtValidator, getMessages)
 

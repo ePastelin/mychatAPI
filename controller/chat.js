@@ -2,6 +2,10 @@ import axios from 'axios';
 import { pool } from '../database/config.js';
 import api, { apiMultimedia } from '../helpers/axios.js';
 import { getChatDetails } from '../helpers/querys.js';
+import multer from 'multer';
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage})
 
 export async function sendMessage(req, res) {
 
@@ -86,8 +90,16 @@ export async function getMessages(req, res) {
 
 export async function sendMultimedia(req, res) {
 
-    const {idChat, file} = req
-    console.log(file)
+    const { file } = req
+    const { idChat} = req.body
+    console.log(file, idChat)
+
+    if (!file) {
+        console.log('No file')
+        return res.status(400).json({ error: 'No file uploaded'})
+    }
+
+    console.log('Theres file')
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
@@ -96,8 +108,5 @@ export async function sendMultimedia(req, res) {
         const response = apiMultimedia.post(url, {file})
     } catch(error) {
     }
-
-
-
 
 }
