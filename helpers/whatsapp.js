@@ -21,15 +21,12 @@ export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
     return response.data.messages[0].id
 }
 
-export const sendMultimedia = async (ourNumber, socioNumber, file, mimeType) => {
+export const sendMultimedia = async (ourNumber, file) => {
     console.log(file)
     const url = `${ourNumber}/media?messaging_product=whatsapp`;
-    
-    const formData = new FormData();
-    formData.append('file', file);
    
     try {
-    const response = await apiMultimedia.post(url, formData);
+    const response = await apiMultimedia.post(url, file);
 
     console.log(response)
     console.log(file)

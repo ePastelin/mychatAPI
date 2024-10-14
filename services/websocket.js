@@ -32,8 +32,8 @@ const setupWebSocket = (server, pool) => {
                     // Enviar el mensaje a través de la API de WhatsApp
 
                     if (parsedData.file) {
-                        const { file, mimeType } = parsedData
-                        sendMultimedia(our_number, socio_number, file, mimeType)
+                        const { file } = parsedData
+                        sendMultimedia(our_number, file)
 
                         console.log('Entré aquí')
                         return
