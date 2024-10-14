@@ -86,7 +86,7 @@ export async function getMessages(req, res) {
 
 export async function sendMultimedia(req, res) {
 
-    console.log(req.body)
+    console.log(req)
     const {idChat, file} = req.body
     console.log(file)
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
