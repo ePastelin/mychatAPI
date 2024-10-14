@@ -108,7 +108,7 @@ export async function sendMultimedia(req, res) {
         const response = await apiMultimedia.post(url, file)
         console.log(response)
     } catch(error) {
-        console.log(error.data.error)
+        console.log(error.error)
     }
 
 }
