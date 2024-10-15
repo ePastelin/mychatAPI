@@ -1,11 +1,7 @@
-import axios from 'axios';
 import { pool } from '../database/config.js';
 import api, { apiMultimedia } from '../helpers/axios.js';
 import { getChatDetails } from '../helpers/querys.js';
-import multer from 'multer';
-
-const storage = multer.memoryStorage()
-const upload = multer({ storage: storage})
+import fs from 'fs'
 
 export async function sendMessage(req, res) {
 
@@ -103,10 +99,14 @@ export async function sendMultimedia(req, res) {
     
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
 
+
     const url = `${our_number}/media?messaging_product=whatsapp`;
 
     try {
-        const response = await apiMultimedia.post(url, {file: file.buffer})
+        const formData = new FormData()
+        formData.append('file', fs.createReadStream(file.path))
+
+        const response = await apiMultimedia.post(url, formData)
         console.log(response)
     } catch(error) {
             // Accede al error de Axios para obtener detalles específicos
