@@ -122,7 +122,7 @@ export async function sendMultimedia(req, res) {
         }
 
         const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
-        console.log(sendResponse)
+        console.log(sendResponse.data.contacts, sendResponse.data.messages)
 
 
     } catch(error) {
