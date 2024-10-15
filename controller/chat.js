@@ -107,11 +107,7 @@ export async function sendMultimedia(req, res) {
         const formData = new FormData()
         formData.append('file', blob, file.originalname) 
 
-        const response = await apiMultimedia.post(url, formData, {
-            headers: {
-                ...formData.getHeaders() // Obtener encabezados correctos para multipart/form-data
-            }
-        })
+        const response = await apiMultimedia.post(url, formData)
         console.log(response)
     } catch(error) {
             // Accede al error de Axios para obtener detalles específicos
