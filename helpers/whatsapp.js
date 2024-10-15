@@ -32,6 +32,7 @@ export const sendMultimedia = async (ourNumber, file) => {
     console.log(file)
     
     return response.data;
+    
     } catch(error) {
         console.log(error)
         return error

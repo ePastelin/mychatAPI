@@ -14,9 +14,6 @@ export const verificar = (req, res) => {
 
 export const recibir = async (req, res) => {
     try {
-        console.log(req.body)
-
-
         const { messages, statuses, event, message_template_id } = req.body.entry[0].changes[0].value || {};
         if (event) await updateTemplateStatus(message_template_id, event)
         if (statuses) await updateMessageStatus(statuses);

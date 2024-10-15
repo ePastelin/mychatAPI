@@ -1,7 +1,7 @@
 import { pool } from '../database/config.js';
 import api, { apiMultimedia } from '../helpers/axios.js';
 import { getChatDetails } from '../helpers/querys.js';
-import fs from 'fs'
+import { saveMultimedia } from '../services/messageService.js';
 
 export async function sendMessage(req, res) {
 
@@ -123,6 +123,11 @@ export async function sendMultimedia(req, res) {
 
         const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
         console.log(sendResponse.data.contacts, sendResponse.data.messages)
+
+
+        const responseSaveMultimedia = saveMultimedia(id, idChat, sendResponse.data.messages[0].id, file.mimetype)
+        console.log(responseSaveMultimedia)
+
 
 
     } catch(error) {

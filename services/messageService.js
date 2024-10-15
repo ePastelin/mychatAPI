@@ -23,9 +23,29 @@ export const updateMessageStatus = async (statuses) => {
     }
 };
 
+export const saveMultimedia = async (id, idChat, idMessage, mime_type) => {
+    const response = await api(id)
+    
+    const { url } = response.data
+
+    const multimediaResponse = await apiMultimedia.get(url, {
+        responseType: 'arraybuffer'
+    })
+
+    const multimedia = multimediaResponse.data
+
+    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
+
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
+        }
+    });
+
+
+}
+
 export const processIncomingMessage = async (body) => {
-    const date = formatDate(Date.now())
-    console.log(body)
     
     try {
         const { metadata, contacts, messages } = body.entry[0].changes[0].value;
