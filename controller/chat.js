@@ -98,6 +98,7 @@ export async function sendMultimedia(req, res) {
     console.log('Theres file')
     
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
+    const type = 'image'
 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
@@ -108,7 +109,22 @@ export async function sendMultimedia(req, res) {
         formData.append('file', blob, file.originalname) 
 
         const response = await apiMultimedia.post(url, formData)
-        console.log(response)
+        const { id } = response.data
+
+        const message = {
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: socio_number,
+            type,
+            image: {
+            id
+            }
+        }
+
+        const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
+        console.log(sendResponse)
+
+
     } catch(error) {
             // Accede al error de Axios para obtener detalles específicos
     if (error.response) {
