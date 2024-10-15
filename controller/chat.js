@@ -103,11 +103,9 @@ export async function sendMultimedia(req, res) {
     const url = `${our_number}/media?messaging_product=whatsapp`;
 
     try {
+        const blob = new Blob([file.buffer], {type: file.mimetype})
         const formData = new FormData()
-        formData.append('file', file.buffer, {
-            filename: file.originalname,
-            contentType: file.mimetype
-        });
+        formData.append('file', blob, file.originalname) 
 
         const response = await apiMultimedia.post(url, formData, {
             headers: {
