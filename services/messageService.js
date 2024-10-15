@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { pool } from '../database/config.js';
 import api, { apiMultimedia } from '../helpers/axios.js';
 import formatDate from '../helpers/formatDate.js';
@@ -33,12 +34,13 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type) => {
     })
 
     const multimedia = multimediaResponse.data
+    const optimizeImage = await sharp(multimedia).resize({ width: 800}).webp({ quality: 70}).toBuffer()
 
-    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 1, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
+    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 1, ?, 1, ?)', [idMessage, idChat, optimizeImage, mime_type]);
 
     wss.clients.forEach(client => {
         if (client.readyState === 1) {
-            client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
+            client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: optimizeImage, type: 1, mimeType: mime_type }));
         }
     });
 
