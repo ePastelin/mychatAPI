@@ -104,7 +104,10 @@ export async function sendMultimedia(req, res) {
 
     try {
         const formData = new FormData()
-        formData.append('file', fs.createReadStream(file.path))
+        formData.append('file', file.buffer, {
+            filename: file.originalname,
+            contentType: file.mimetype
+        })
 
         const response = await apiMultimedia.post(url, formData)
         console.log(response)
