@@ -125,7 +125,7 @@ export async function sendMultimedia(req, res) {
         console.log(sendResponse.data.contacts, sendResponse.data.messages)
 
 
-        const responseSaveMultimedia = saveMultimedia(id, idChat, sendResponse.data.messages[0].id, file.mimetype)
+        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, file.mimetype)
         console.log(responseSaveMultimedia)
 
 
