@@ -25,7 +25,7 @@ export const updateMessageStatus = async (statuses) => {
 
 export const optimazeImage = async (image) => await sharp(image).resize({ width: 800}).webp({ quality: 70}).toBuffer()  
 
-export const saveMultimedia = async (id, idChat, idMessage, mime_type, type) => {
+export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, filename) => {
     const response = await api(id)
     const { url } = response.data
 
@@ -41,7 +41,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type) => 
 
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
-                client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type }));
+                client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
             }
         });
         } 

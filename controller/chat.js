@@ -102,14 +102,12 @@ export async function sendMultimedia(req, res) {
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
     const {mimetype, buffer, originalname} = file
-    const type = mimetype.startsWith('image/') ? 'image' : 'document' 
+    const type = mimetype.startsWith('image/') ? 'image' : mimetype.startsWith('application/') && 'document' 
     const blob = new Blob([buffer], {type: mimetype})
     const formData = new FormData()
     formData.append('file', blob, originalname)
 
     try {
- 
-
         const response = await apiMultimedia.post(url, formData)
         const { id } = response.data
 
@@ -128,7 +126,7 @@ export async function sendMultimedia(req, res) {
         console.log(sendResponse.data.contacts, sendResponse.data.messages)
 
 
-        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type)
+        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname)
         console.log(responseSaveMultimedia)
 
     } catch(error) {
