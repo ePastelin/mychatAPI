@@ -29,16 +29,6 @@ const setupWebSocket = (server, pool) => {
                     // Obtener detalles del chat desde la base de datos
                     const { our_number, socio_number } = await getChatDetails(pool, idChat);
 
-                    // Enviar el mensaje a través de la API de WhatsApp
-
-                    if (parsedData.file) {
-                        const { file } = parsedData
-                        sendMultimedia(our_number, file)
-
-                        console.log('Entré aquí')
-                        return
-                    }
-
                     const messageId = await sendWhatsAppMessage(our_number, socio_number, message);
 
                     // Guardar el mensaje en la base de datos

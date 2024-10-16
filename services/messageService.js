@@ -61,11 +61,11 @@ export const processIncomingMessage = async (body) => {
         const { id: idMessage, text } = messages[0];
         const { type } = messages[0]
 
-        if (type === 'image' || type === 'document' || type === 'sticker') {
+        if (type !== 'text') {
             let id
             if (type === 'image') { id = messages[0].image.id } 
-            if (type === 'document') { id = messages[0].document.id } 
-            if (type === 'sticker') { id = messages[0].sticker.id } 
+            else if (type === 'document') { id = messages[0].document.id } 
+            else if (type === 'sticker') { id = messages[0].sticker.id } 
 
             console.log('id', id)
             const response = await api(id)
@@ -76,11 +76,12 @@ export const processIncomingMessage = async (body) => {
             const multimediaResponse = await apiMultimedia.get(url, {
                 responseType: 'arraybuffer'
             }) 
+            const { data } = multimediaResponse
 
             console.log(multimediaResponse, 'without data')
             console.log(multimediaResponse.data, 'image response')
     
-            const multimedia = multimediaResponse.data
+            const multimedia = type !== 'document' ? optimazeImage(data) : data 
 
             console.log('info about document', messages[0].document)
             
