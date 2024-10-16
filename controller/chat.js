@@ -85,20 +85,14 @@ export async function getMessages(req, res) {
 }
 
 export async function sendMultimedia(req, res) {
-
     const { file } = req
     const { idChat} = req.body
-    console.log(file, idChat)
 
     if (!file) {
-        console.log('No file')
         return res.status(400).json({ error: 'No file uploaded'})
     }
-
-    console.log('Theres file')
     
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
-
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
     const {mimetype, buffer, originalname} = file
@@ -123,29 +117,10 @@ export async function sendMultimedia(req, res) {
         else return res.json({ok: false, data: 'Formato no válido'}).status(400)
 
         const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
-        console.log(sendResponse.data.contacts, sendResponse.data.messages)
 
-
-        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname)
-        console.log(responseSaveMultimedia)
-
+        await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname)
     } catch(error) {
-            // Accede al error de Axios para obtener detalles específicos
-    if (error.response) {
-        // El servidor respondió con un código de estado fuera del rango 2xx
-        console.log('Status:', error.response.status); // Código de estado HTTP
-        console.log('Headers:', error.response.headers); // Headers de la respuesta
-        console.log('Data:', JSON.stringify(error.response.data, null, 2)); // El objeto completo del error
-    } else if (error.request) {
-        // La petición fue hecha pero no hubo respuesta
-        console.log('Request:', error.request);
-    } else {
-        // Algo sucedió al configurar la solicitud que lanzó un error
-        console.log('Error Message:', error.message);
-    }
-
-    // Opcional: muestra el error completo en formato de string para ver toda su estructura
-    console.log('Error Config:', JSON.stringify(error.config, null, 2));
+           console.log(error.response.data) 
     }
 
 }

@@ -34,17 +34,16 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
     })
     const { data } = multimediaResponse
     const typeNumber = type === 'document' ? 5 : type === 'image' && 1
-
     const multimedia = type === 'document' ? data : type === 'image' && await optimazeImage(data)
 
     await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 1, ?, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type, filename]);
-
+    
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
                 client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
             }
         });
-        } 
+    } 
 
 
 export const processIncomingMessage = async (body) => {
@@ -90,6 +89,7 @@ export const processIncomingMessage = async (body) => {
             const {mime_type} = messages[0].image
             console.log(messages[0].image)
             await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
+            await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', ['Multimedia 📁', idChat])
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
