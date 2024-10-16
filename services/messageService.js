@@ -61,30 +61,26 @@ export const processIncomingMessage = async (body) => {
         const { type } = messages[0]
 
         if (type !== 'text') {
-            let id
-            if (type === 'image') { id = messages[0].image.id } 
-            else if (type === 'document') { id = messages[0].document.id } 
-            else if (type === 'sticker') { id = messages[0].sticker.id } 
 
-            console.log('id', id)
+            const message = {
+                image: messages[0].image,
+                document: messages[0].document,
+                sticker: messages[0].sticker
+              } [type] 
+
+            const { id, mime_type } = message 
+            console.log('Aquí está la destructuración', id, mime_type)
+
             const response = await api(id)
-            console.log('first petition', response)
-
-            const {url} = response.data
+            const { url } = response.data
 
             const multimediaResponse = await apiMultimedia.get(url, {
                 responseType: 'arraybuffer'
             }) 
             const { data } = multimediaResponse
 
-            console.log(multimediaResponse, 'without data')
-            console.log(multimediaResponse.data, 'image response')
-    
             const multimedia = type !== 'document' ? await optimazeImage(data) : data 
-            console.log(multimedia, 'This is our multimedia')
 
-            console.log('info about document', messages[0].document)
-            
             if (type === 'image') {
             const {mime_type} = messages[0].image
             console.log(messages[0].image)
