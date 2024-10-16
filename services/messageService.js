@@ -37,7 +37,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 
     const multimedia = type === 'document' ? data : type === 'image' && await optimazeImage(data)
 
-    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 1, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type]);
+    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 1, ?, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type, filename]);
 
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
