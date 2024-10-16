@@ -1,7 +1,6 @@
 import sharp from 'sharp';
 import { pool } from '../database/config.js';
 import api, { apiMultimedia } from '../helpers/axios.js';
-import formatDate from '../helpers/formatDate.js';
 import formatNumber from '../helpers/formatNumber.js';
 import { wss } from '../index.js';
 import WebSocket from 'ws';
@@ -24,28 +23,29 @@ export const updateMessageStatus = async (statuses) => {
     }
 };
 
-export const saveMultimedia = async (id, idChat, idMessage, mime_type) => {
+export const optimazeImage = async (image) => await sharp(image).resize({ width: 800}).webp({ quality: 70}).toBuffer()  
+
+export const saveMultimedia = async (id, idChat, idMessage, mime_type, type) => {
     const response = await api(id)
-    
     const { url } = response.data
 
     const multimediaResponse = await apiMultimedia.get(url, {
         responseType: 'arraybuffer'
     })
+    const { data } = multimediaResponse
+    const typeNumber = type === 'document' ? 5 : type === 'image' && 1
 
-    const multimedia = multimediaResponse.data
-    const optimizeImage = await sharp(multimedia).resize({ width: 800}).webp({ quality: 70}).toBuffer()
+    const multimedia = type === 'document' ? data : type === 'image' && await optimazeImage(data)
 
-    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 1, ?, 1, ?)', [idMessage, idChat, optimizeImage, mime_type]);
+    await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 1, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type]);
 
-    wss.clients.forEach(client => {
-        if (client.readyState === 1) {
-            client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: optimizeImage, type: 1, mimeType: mime_type }));
-        }
-    });
+        wss.clients.forEach(client => {
+            if (client.readyState === 1) {
+                client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type }));
+            }
+        });
+        } 
 
-
-}
 
 export const processIncomingMessage = async (body) => {
     

@@ -98,15 +98,17 @@ export async function sendMultimedia(req, res) {
     console.log('Theres file')
     
     const { our_number, socio_number } = await getChatDetails(pool, idChat) 
-    const type = 'image'
 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
+    const {mimetype, buffer, originalname} = file
+    const type = mimetype.startsWith('image/') ? 'image' : 'document' 
+    const blob = new Blob([buffer], {type: mimetype})
+    const formData = new FormData()
+    formData.append('file', blob, originalname)
 
     try {
-        const blob = new Blob([file.buffer], {type: file.mimetype})
-        const formData = new FormData()
-        formData.append('file', blob, file.originalname) 
+ 
 
         const response = await apiMultimedia.post(url, formData)
         const { id } = response.data
@@ -116,19 +118,18 @@ export async function sendMultimedia(req, res) {
             recipient_type: "individual",
             to: socio_number,
             type,
-            image: {
-            id
-            }
         }
+
+        if (type === 'image') message.image = {id}
+        else if (type === 'document') message.document = {id, filename: originalname}
+        else return res.json({ok: false, data: 'Formato no válido'}).status(400)
 
         const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
         console.log(sendResponse.data.contacts, sendResponse.data.messages)
 
 
-        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, file.mimetype)
+        const responseSaveMultimedia = await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type)
         console.log(responseSaveMultimedia)
-
-
 
     } catch(error) {
             // Accede al error de Axios para obtener detalles específicos
