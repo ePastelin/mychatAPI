@@ -81,7 +81,8 @@ export const processIncomingMessage = async (body) => {
             console.log(multimediaResponse, 'without data')
             console.log(multimediaResponse.data, 'image response')
     
-            const multimedia = type !== 'document' ? optimazeImage(data) : data 
+            const multimedia = type !== 'document' ? await optimazeImage(data) : data 
+            console.log(multimedia, 'This is our multimedia')
 
             console.log('info about document', messages[0].document)
             
