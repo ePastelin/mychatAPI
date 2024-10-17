@@ -49,11 +49,9 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 export const processIncomingMessage = async (body) => {
     
     try {
-        const { metadata, contacts, messages } = body.entry[0].changes[0].value;
+        const { metadata, messages } = body.entry[0].changes[0].value;
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
-
-        
 
         const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
         const idChat = rows[0].id;
@@ -69,7 +67,6 @@ export const processIncomingMessage = async (body) => {
               } [type] 
 
             const { id, mime_type } = message 
-            console.log('Aquí está la destructuración', id, mime_type)
 
             const response = await api(id)
             const { url } = response.data
@@ -80,50 +77,21 @@ export const processIncomingMessage = async (body) => {
             const { data } = multimediaResponse
 
             const multimedia = type !== 'document' ? await optimazeImage(data) : data 
+            const filename = type === 'image' ? '' : message.filename
+            const typeNumber = type === 'image' ? 1 : type === 'document' && 5
 
-            if (type === 'image') {
-            const {mime_type} = messages[0].image
-            console.log(messages[0].image)
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
+            await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 0, ?, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type, filename]);
             await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', ['Multimedia 📁', idChat])
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type }));
                 }
             });
             return 
-            }
-
-            if (type === 'sticker') {
-            const {mime_type} = messages[0].sticker
-            console.log(messages[0].sticker)
-            await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType) VALUES (?, ?, 0, ?, 1, ?)', [idMessage, idChat, multimedia, mime_type]);
-
-            wss.clients.forEach(client => {
-                if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 1, mimeType: mime_type }));
-                }
-            });
-            return
-            }
-
-            if (type === 'document') {
-             const {filename, mime_type} = messages[0].document
-             await pool.query('INSERT INTO message (id, idChat, sender, media, type, filename, mimeType) VALUES (?, ?, 0, ?, 5, ?, ?)', [idMessage, idChat, multimedia, filename, mime_type]);
-
-            wss.clients.forEach(client => {
-                if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: 5, filename: filename, mimeType: mime_type,  }));
-                }
-            });
-            return
-            }
         } 
 
         const message = text.body;
-
-
 
         const [existingMessage] = await pool.query('SELECT * FROM message WHERE id = ?', [idMessage]);
         if (existingMessage.length > 0) {
