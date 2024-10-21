@@ -85,7 +85,7 @@ export const processIncomingMessage = async (body) => {
 
             wss.clients.forEach(client => {
                 if (client.readyState === 1) {
-                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type }));
+                    client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
                 }
             });
             return 
