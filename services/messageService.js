@@ -76,9 +76,9 @@ export const processIncomingMessage = async (body) => {
             }) 
             const { data } = multimediaResponse
 
-            const multimedia = type !== 'document' ? await optimazeImage(data) : data 
-            const filename = type === 'image' ? '' : message.filename
-            const typeNumber = type === 'image' ? 1 : type === 'document' && 5
+            const multimedia = type !== 'document' || type !== 'sticker' ? await optimazeImage(data) : data 
+            const filename = type === 'image' || type === 'sticker' ? '' : message.filename
+            const typeNumber = type === 'image' || 'sticker' ? 1 : type === 'document' && 5
 
             await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 0, ?, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type, filename]);
             await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', ['Multimedia 📁', idChat])

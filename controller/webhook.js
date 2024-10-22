@@ -16,8 +16,8 @@ export const recibir = async (req, res) => {
     try {
         const { messages, statuses, event, message_template_id } = req.body.entry[0].changes[0].value || {};
         if (event) await updateTemplateStatus(message_template_id, event)
-        if (statuses) await updateMessageStatus(statuses);
-        if (messages) await processIncomingMessage(req.body);
+        else if (statuses) await updateMessageStatus(statuses);
+        else if (messages) await processIncomingMessage(req.body);
     } catch (error) {
         console.error('Error al procesar el mensaje:', error);
     } finally {
