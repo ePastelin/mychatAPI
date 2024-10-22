@@ -9,9 +9,6 @@ export async function sendMessage(req, res) {
 
     const [rows] = await pool.query('SELECT our_number, socio_number FROM chat WHERE id = ?', [idChat]);
     const {our_number, socio_number} = rows[0]
-    console.log(req.body)
-    console.log(message)
-    console.log(our_number, socio_number)
    
 
     try {
@@ -44,22 +41,6 @@ export async function getChats(req, res) {
 
     const userId = req.id
     try {
-        // const [rows] = await pool.query(
-        //     "SELECT COALESCE(GROUP_CONCAT(n.number_id SEPARATOR ','), '') AS phone_numbers FROM users_numbers n WHERE n.user_id = ?",
-        //     [userId]
-        //   );
-
-        // const phoneNumbers = rows[0].phone_numbers ? rows[0].phone_numbers.split(',') : []
-
-        // console.log(phoneNumbers)
-
-        // const [chats] = await pool.query(`
-        //     SELECT c.*
-        //     FROM chat c
-        //     JOIN number n ON c.our_number = n.idnumber
-        //     WHERE n.idnumber IN (?)
-        //   `, [phoneNumbers]);
-
         const [ chats ] = await pool.query(`SELECT * FROM chat WHERE user = ?`, [userId])
 
         res.json({chats})

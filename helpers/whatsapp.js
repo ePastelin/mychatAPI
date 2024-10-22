@@ -1,9 +1,7 @@
-import axios from 'axios'
 import api, { apiMultimedia } from './axios.js';
 
 export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
     const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`
-    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN
 
     const whatsappData = {
         messaging_product: 'whatsapp',
