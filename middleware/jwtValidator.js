@@ -12,17 +12,45 @@ export const jwtValidator = (req, res, next) => {
     }
 
     try {
-        const { id, fullname, role_id } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+        const { id, username, role } = jwt.verify(token, process.env.SECRET_JWT_SEED);
 
         req.id = id;
-        req.fullname = fullname;
-        req.role_id = role_id;
+        req.username = username;
+        req.role = role;
     } catch {
         return res.status(401).json({
             ok: false,
             message: "Invalid token"
         });
     }
+
+    next();
+}
+
+export const adminValidator = (req, res, next) =>{
+    const token = req.header('x-token');
+    console.log(token)
+
+    if(!token) {
+        return res.status(401).json({
+            ok: false,
+            message: "You're not logged"
+        })
+    }
+    
+    try {
+        const {role} = jwt.verify(token, process.env.SECRET_JWT_SEED)
+        if (role !== 1) return res.status(401).json({
+            ok: false,
+            message: "You're not admin"
+        })
+
+    } catch {
+        return res.status(401).json({
+            ok: false,
+            message: "Invalid token"
+        });
+    } 
 
     next();
 }

@@ -76,15 +76,15 @@ export const userLogin = async (req, res) => {
         })
       }
   
-      const { id, fullname, role } = user
+      const { id, username, role } = user
 
       //Generate JWT
-      const token = await generateToken(id, fullname, role);
+      const token = await generateToken(id, username, role);
   
       res.status(200).json({
         ok: true,
         uid: id,
-        name: fullname,
+        name: username,
         role,
         token,
       })
