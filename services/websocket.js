@@ -13,7 +13,11 @@ const setupWebSocket = (server, pool) => {
             if (action === 'register') {
                 console.log("I'm saving my idUser")
                 ws.idUser = idUser;
-                console.log("client user", wss.clients)
+                console.log("I'm saving my idUser")
+                wss.clients.forEach(wi => {
+                    console.log(wi)
+                    console.log(wi.idUser)
+                }) 
             }
 
             try {
