@@ -11,7 +11,9 @@ const setupWebSocket = (server, pool) => {
             const { message, idChat, action, idMessage, idUser } = parsedData;
             
             if (action === 'register') {
+                console.log("I'm saving my idUser")
                 ws.idUser = idUser;
+                console.log("client user", wss.clients)
             }
 
             try {
