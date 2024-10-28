@@ -72,7 +72,7 @@ export async function sendMultimedia(req, res) {
         return res.status(400).json({ error: 'No file uploaded'})
     }
     
-    const { our_number, socio_number } = await getChatDetails(pool, idChat) 
+    const { our_number, socio_number, user: idUser } = await getChatDetails(pool, idChat) 
 
     const url = `${our_number}/media?messaging_product=whatsapp`;
     const {mimetype, buffer, originalname} = file
@@ -98,7 +98,7 @@ export async function sendMultimedia(req, res) {
 
         const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message)
 
-        await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname)
+        await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname, idUser)
     } catch(error) {
            console.log(error.response.data) 
     }

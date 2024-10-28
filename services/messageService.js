@@ -25,7 +25,7 @@ export const updateMessageStatus = async (statuses) => {
 
 export const optimazeImage = async (image) => await sharp(image).resize({ width: 800}).webp({ quality: 70}).toBuffer()  
 
-export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, filename) => {
+export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, filename, idUser) => {
     const response = await api(id)
     const { url } = response.data
 
@@ -39,7 +39,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
     await pool.query('INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 1, ?, ?, ?, ?)', [idMessage, idChat, multimedia, typeNumber, mime_type, filename]);
     
         wss.clients.forEach(client => {
-            if (client.readyState === 1) {
+            if (client.readyState === 1 && client.idUser == idUser) {
                 client.send(JSON.stringify({ idChat, sender: 1, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
             }
         });
@@ -47,7 +47,6 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 
 
 export const processIncomingMessage = async (body) => {
-    
     try {
         const { metadata, messages } = body.entry[0].changes[0].value;
         const { phone_number_id } = metadata;
@@ -83,7 +82,7 @@ export const processIncomingMessage = async (body) => {
             await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', ['Multimedia 📁', idChat])
 
             wss.clients.forEach(client => {
-                if (client.readyState === 1 && client.idUser === idUser) {
+                if (client.readyState === 1 && client.idUser == idUser) {
                     client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
                 }
             });
@@ -102,9 +101,7 @@ export const processIncomingMessage = async (body) => {
         await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', [message, idChat])
 
         wss.clients.forEach(client => {
-            console.log("Reciviendo mensajes y viendo el idUser; ", idUser, client.idUser)
             if (client.readyState === 1 && client.idUser == idUser) {
-                console.log("Entro a enbiar mensaje")
                 client.send(JSON.stringify({ idChat, message, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage }));
             }
         });

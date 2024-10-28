@@ -40,7 +40,7 @@ const setupWebSocket = (server, pool) => {
 
 const notifyClients = (wss, messageId, idChat, message, action, idUser) => {
     wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN && client.idUser === idUser) {
+        if (client.readyState === WebSocket.OPEN && client.idUser == idUser) {
             client.send(JSON.stringify({
                 action: action || 'message',
                 idMessage: messageId,
