@@ -53,7 +53,7 @@ export const processIncomingMessage = async (body) => {
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
 
-        const [[{id: idChat, user:idUser}]] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
+        const [[{id: idChat, user: idUser}]] = await pool.query('SELECT id,  user FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
 
         const { id: idMessage, text } = messages[0];
         const { type } = messages[0]
