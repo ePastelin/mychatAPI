@@ -11,13 +11,7 @@ const setupWebSocket = (server, pool) => {
             const { message, idChat, action, idMessage, idUser } = parsedData;
             
             if (action === 'register') {
-                console.log("I'm saving my idUser")
                 ws.idUser = idUser;
-                console.log("I'm saving my idUser")
-                wss.clients.forEach(wi => {
-                    console.log(wi)
-                    console.log(wi.idUser)
-                }) 
             }
 
             try {

@@ -102,6 +102,7 @@ export const processIncomingMessage = async (body) => {
         await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', [message, idChat])
 
         wss.clients.forEach(client => {
+            console.log("Reciviendo mensajes y viendo el idUser; ", idUser, client.idUser)
             if (client.readyState === 1 && client.idUser === idUser) {
                 client.send(JSON.stringify({ idChat, message, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage }));
             }
