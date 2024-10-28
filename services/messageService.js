@@ -13,6 +13,8 @@ export const updateMessageStatus = async (statuses) => {
         const [[ {idChat} ]] = await pool.query('SELECT idChat from messages WHERE id', [id])
         const { user: idUser }= await getChatDetails(pool, idChat)
 
+        console.log(idChat, idUser, "idChat and idUser from updateMessageStatus")
+
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN && client.idUser == idUser) {
                 client.send(JSON.stringify({
