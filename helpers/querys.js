@@ -14,7 +14,7 @@ export const saveMessageToDatabase = async (pool, messageId, chatId, message) =>
 
 export const getChatDetails = async (pool, chatId) => {
     const [rows] = await pool.query(
-        'SELECT our_number, socio_number FROM chat WHERE id = ?', 
+        'SELECT our_number, socio_number, user FROM chat WHERE id = ?', 
         [chatId]
     );
     return rows[0];

@@ -53,13 +53,12 @@ export const processIncomingMessage = async (body) => {
         const { phone_number_id } = metadata;
         const socioNumber = formatNumber(messages[0].from);
 
-        const [rows] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
-        const idChat = rows[0].id;
+        const [[{id: idChat, user:idUser}]] = await pool.query('SELECT id FROM chat WHERE our_number = ? AND socio_number = ?', [phone_number_id, socioNumber]);
+
         const { id: idMessage, text } = messages[0];
         const { type } = messages[0]
 
         if (type !== 'text') {
-
             const message = {
                 image: messages[0].image,
                 document: messages[0].document,
@@ -84,7 +83,7 @@ export const processIncomingMessage = async (body) => {
             await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', ['Multimedia 📁', idChat])
 
             wss.clients.forEach(client => {
-                if (client.readyState === 1) {
+                if (client.readyState === 1 && client.idUser === idUser) {
                     client.send(JSON.stringify({ idChat, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage, media: multimedia, type: typeNumber, mimeType: mime_type, filename }));
                 }
             });
@@ -103,7 +102,7 @@ export const processIncomingMessage = async (body) => {
         await pool.query('UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?', [message, idChat])
 
         wss.clients.forEach(client => {
-            if (client.readyState === 1) {
+            if (client.readyState === 1 && client.idUser === idUser) {
                 client.send(JSON.stringify({ idChat, message, sender: 0, date: Date.now(), status: 'sent', idMessage: idMessage }));
             }
         });

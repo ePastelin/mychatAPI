@@ -38,7 +38,6 @@ export async function sendMessage(req, res) {
 }
 
 export async function getChats(req, res) {
-
     const userId = req.id
     try {
         const [ chats ] = await pool.query(`SELECT * FROM chat WHERE user = ?`, [userId])
