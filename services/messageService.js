@@ -10,7 +10,7 @@ export const updateMessageStatus = async (statuses) => {
     try {
         const { id, status } = statuses[0];
         await pool.query('UPDATE message SET status = ? WHERE id = ?', [status, id]);
-        const [[ {idChat} ]] = await pool.query('SELECT idChat from message WHERE id', [id])
+        const [[ { idChat } ]] = await pool.query('SELECT idChat from message WHERE id = ?', [id])
         const { user: idUser }= await getChatDetails(pool, idChat)
 
         console.log(idChat, idUser, "idChat and idUser from updateMessageStatus")
