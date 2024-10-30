@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 export const jwtValidator = (req, res, next) => {
 
     const token = req.header('x-token');
-    console.log(token)
     if (!token) {
         return res.status(401).json({
             ok: false,
@@ -20,7 +19,7 @@ export const jwtValidator = (req, res, next) => {
     } catch {
         return res.status(401).json({
             ok: false,
-            message: "Invalid token"
+            message: "Invalid Token"
         });
     }
 
@@ -29,12 +28,11 @@ export const jwtValidator = (req, res, next) => {
 
 export const adminValidator = (req, res, next) =>{
     const token = req.header('x-token');
-    console.log(token)
 
     if(!token) {
         return res.status(401).json({
             ok: false,
-            message: "You're not logged"
+            message: "There's no token in the request"
         })
     }
     

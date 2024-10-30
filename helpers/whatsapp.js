@@ -1,39 +1,32 @@
-import api, { apiMultimedia } from './axios.js';
+import api from "./axios.js";
 
-export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) =>{
-    const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`
+export const sendWhatsAppMessage = async (ourNumber, socioNumber, message) => {
+  if (!ourNumber || !socioNumber || !message) {
+    throw new Error("Incomplete data paramaters");
+  }
 
-    const whatsappData = {
-        messaging_product: 'whatsapp',
-        recipient_type: 'individual',
-        to: socioNumber,
-        type: 'text',
-        text: {
-            preview_url: false,
-            body: message
-        }
-    };
+  const url = `https://graph.facebook.com/v20.0/${ourNumber}/messages`;
 
+  const whatsappData = {
+    messaging_product: "whatsapp",
+    recipient_type: "individual",
+    to: socioNumber,
+    type: "text",
+    text: {
+      preview_url: false,
+      body: message,
+    },
+  };
+
+  try {
     const response = await api.post(url, whatsappData);
-
-    return response.data.messages[0].id
-}
-
-export const sendMultimedia = async (ourNumber, file) => {
-    console.log(file)
-    const url = `${ourNumber}/media?messaging_product=whatsapp`;
-   
-    try {
-    const response = await apiMultimedia.post(url, file);
-
-    console.log(response)
-    console.log(file)
-    
-    return response.data;
-    
-    } catch(error) {
-        console.log(error)
-        return error
+    return response.data.messages[0].id;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      const metaErrorMessage = error.response.data.error.message;
+      throw new Error(metaErrorMessage || "Error sending Whatsapp message");
+    } else {
+      throw new Error("An unknown error occurred");
     }
-    
+  }
 };
