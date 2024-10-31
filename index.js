@@ -5,7 +5,11 @@ import cors from "cors";
 import setupWebSocket from "./services/websocket.js";
 import routes from "./routes/index.js";
 import { pool } from "./database/config.js";
-import path from "path";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename); 
 
 const app = express();
 const server = createServer(app);
