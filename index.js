@@ -19,6 +19,8 @@ app.use(express.json());
 
 app.use(routes);
 
+app.use('/multimedia', express.static(path.join(__dirname, 'multimedia')));
+
 if (process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => {
     console.log("El servidor está escuchando en el puerto: " + PORT);
