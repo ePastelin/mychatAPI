@@ -87,4 +87,10 @@ describe("sendWhatsappMessage function", () => {
       sendWhatsAppMessage(ourNumber, socioNumber, message)
     ).rejects.toThrow("The access token could not be decrypted");
   });
+
+  test("should throw 'unknow error' if is an unknow error", async() => {
+    api.post.mockRejectedValue({})
+    
+    await expect(sendWhatsAppMessage(ourNumber, socioNumber, message)).rejects.toThrow("An unknown error occurred")
+  })
 });

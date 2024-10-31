@@ -1,21 +1,22 @@
 import { describe, test, expect, beforeEach, jest } from "@jest/globals";
-import { adminValidator, jwtValidator } from "../../../middleware/jwtValidator";
-import { generateToken } from "../../../helpers/jwt";
+import { adminValidator, jwtValidator } from "../../middleware/jwtValidator";
+import { generateToken } from "../../helpers/jwt";
+
+
+let req, res, next;
+
+beforeEach(() => {
+  req = {
+    header: jest.fn(),
+  };
+  res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+  };
+  next = jest.fn();
+});
 
 describe("jwt middleware validator", () => {
-  let req, res, next;
-
-  beforeEach(() => {
-    req = {
-      header: jest.fn(),
-    };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-    };
-    next = jest.fn();
-  });
-
   test("should call next if user is authenticated", async () => {
     const token = await generateToken(crypto.randomUUID(), "azulcolor", 3);
     req.header.mockReturnValue(token);
@@ -53,19 +54,6 @@ describe("jwt middleware validator", () => {
 });
 
 describe("Admin user validator", () => {
-  let req, res, next;
-
-  beforeEach(() => {
-    req = {
-      header: jest.fn(),
-    };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-    };
-    next = jest.fn();
-  });
-
   test("should call next if user is admin", async () => {
     const token = await generateToken(crypto.randomUUID(), "azulcolor", 1);
     req.header.mockReturnValue(token);

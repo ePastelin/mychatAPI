@@ -1,51 +1,17 @@
 import { pool } from '../database/config.js';
-import api, { apiMultimedia } from '../helpers/axios.js';
+import { apiMultimedia } from '../helpers/axios.js';
 import { getChatDetails } from '../helpers/querys.js';
 import { saveMultimedia } from '../services/messageService.js';
 
-export async function sendMessage(req, res) {
-
-    const { message, idChat } = req.body
-
-    const [rows] = await pool.query('SELECT our_number, socio_number FROM chat WHERE id = ?', [idChat]);
-    const {our_number, socio_number} = rows[0]
-   
-
-    try {
-        const url = `${our_number}/messages`;
-        const data = {
-            messaging_product: 'whatsapp',
-            recipient_type: 'individual',
-            to: socio_number, 
-            type: 'text',
-            text: {
-                preview_url: false,
-                body: message 
-            }
-        };
-
-        const response = await api.post(url, data) 
-        console.log(response)
-
-        const envio = await pool.query('INSERT INTO message (idChat, sender, message) VALUES (?, 1, ?)', [idChat, message])
-        console.log(envio)
-
-        res.json(response.data);
-    } catch (error) {
-        console.error('Error al enviar el mensaje:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-}
-
 export async function getChats(req, res) {
     const userId = req.id
+    
     try {
         const [ chats ] = await pool.query(`SELECT * FROM chat WHERE user = ?`, [userId])
 
         res.json({chats})
     } catch(error) {
-        console.error(error)
-        res.status(500).json({error})
+        res.status(500).json(error)
     }
 } 
 
@@ -58,7 +24,6 @@ export async function getMessages(req, res) {
 
         res.status(200).json(rows)
     }catch(error) {
-        console.error(error)
         res.status(500).json({error})
     }
 
