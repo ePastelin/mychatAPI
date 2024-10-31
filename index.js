@@ -5,6 +5,7 @@ import cors from "cors";
 import setupWebSocket from "./services/websocket.js";
 import routes from "./routes/index.js";
 import { pool } from "./database/config.js";
+import path from "path";
 
 const app = express();
 const server = createServer(app);
