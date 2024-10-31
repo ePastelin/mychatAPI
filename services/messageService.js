@@ -6,11 +6,11 @@ import { wss } from "../index.js";
 import WebSocket from "ws";
 import { getChatDetails } from "../helpers/querys.js";
 import fs from "fs";
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename); 
+const __dirname = path.dirname(__filename);
 
 export const updateMessageStatus = async (statuses) => {
   try {
@@ -134,9 +134,21 @@ export const processIncomingMessage = async (body) => {
       const typeNumber =
         type === "image" || type === "sticker" ? 1 : type === "document" && 5;
 
+      const folderPath = path.join(
+        __dirname,
+        `multimedia/${idChat}/${type}/sent`
+      );
+      const filePath = path.join(folderPath, filename);
+
+      if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
+      }
+
+      fs.writeFileSync(filePath, multimedia);
+
       await pool.query(
         "INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 0, ?, ?, ?, ?)",
-        [idMessage, idChat, multimedia, typeNumber, mime_type, filename]
+        [idMessage, idChat, filePath, typeNumber, mime_type, filename]
       );
       await pool.query(
         "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
@@ -152,7 +164,7 @@ export const processIncomingMessage = async (body) => {
               date: Date.now(),
               status: "sent",
               idMessage: idMessage,
-              media: multimedia,
+              media: filePath,
               type: typeNumber,
               mimeType: mime_type,
               filename,
