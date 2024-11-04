@@ -8,9 +8,7 @@ import { getChatDetails } from "../helpers/querys.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import __dirname from "../helpers/getDirname.cjs";
 
 export const updateMessageStatus = async (statuses) => {
   try {

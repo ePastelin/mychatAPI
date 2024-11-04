@@ -1,7 +1,13 @@
 import { jest, describe, test, expect, beforeEach } from "@jest/globals";
-import { getChats } from "../../controller/chat";
+import { getChats, getMessages } from "../../controller/chat";
 import { pool } from "../../database/config";
 import { __esModule } from "@babel/preset-env";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Mock __filename and __dirname
+const __filename = fileURLToPath("file://" + __dirname + "/mockedFile.js"); // Mock path for Jest
+const __dirname = path.dirname(__filename);
 
 jest.mock("../../database/config", () => ({
   __esModule: true,
@@ -78,5 +84,54 @@ describe("getMessages", () => {
         id: 1,
       },
     };
+  });
+
+  test("Should return with the messages of the chat", async () => {
+    const mockMessages = [
+      {
+        "id": "wamid.HBgNNTIxOTk4MjkzMzIzMBUCABIYFjNFQjAxMjM0RUI1Nzg0NzdDODA1OTYA",
+        "idChat": 19,
+        "sender": 0,
+        "date": "2024-10-21T12:37:57.000Z",
+        "message": "?",
+        "type": null,
+        "status": "read",
+        "media": null,
+        "filename": null,
+        "mimeType": null
+    },
+    {
+        "id": "wamid.HBgNNTIxOTk4MjkzMzIzMBUCABIYFjNFQjA0MkRDNjhDMjBFNEI5NEMwRDYA",
+        "idChat": 19,
+        "sender": 0,
+        "date": "2024-10-21T12:38:07.000Z",
+        "message": "Hola",
+        "type": null,
+        "status": "read",
+        "media": null,
+        "filename": null,
+        "mimeType": null
+    },
+    {
+        "id": "wamid.HBgNNTIxOTk4MjkzMzIzMBUCABEYEjcyODk0NEVERDhDQkU4OTA0MwA=",
+        "idChat": 19,
+        "sender": 1,
+        "date": "2024-10-21T12:40:01.000Z",
+        "message": "?",
+        "type": null,
+        "status": "read",
+        "media": null,
+        "filename": null,
+        "mimeType": null
+    },
+    ]
+
+    pool.query.mockResolvedValueOnce([mockMessages])
+
+    await getMessages(req, res)
+
+    expect(pool.query).toHaveBeenCalledWith('SELECT * FROM message WHERE idChat = (?) ORDER BY date ASC', [req.params.id])
+
+    expect(req.json).toHaveBeenCalledWith(mockMessages)
   });
 });
