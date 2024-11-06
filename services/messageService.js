@@ -108,6 +108,11 @@ export const processIncomingMessage = async (body) => {
 
     const { id: idMessage, text } = messages[0];
     const { type } = messages[0];
+    
+    if(type === 'button') {
+      console.log(messages.context, messages.button)
+      return
+    }
 
     if (type !== "text") {
       const message = {
