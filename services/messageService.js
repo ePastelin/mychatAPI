@@ -110,7 +110,7 @@ export const processIncomingMessage = async (body) => {
     const { type } = messages[0];
     
     if(type === 'button') {
-      console.log(messages.context, messages.button)
+      console.log(messages[0].context, messages[0].button)
       return
     }
 
