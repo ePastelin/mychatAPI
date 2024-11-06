@@ -7,7 +7,6 @@ import WebSocket from "ws";
 import { getChatDetails } from "../helpers/querys.js";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import __dirname from "../helpers/getDirname.cjs";
 
 export const updateMessageStatus = async (statuses) => {

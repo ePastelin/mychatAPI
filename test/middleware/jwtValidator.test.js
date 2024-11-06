@@ -2,7 +2,6 @@ import { describe, test, expect, beforeEach, jest } from "@jest/globals";
 import { adminValidator, jwtValidator } from "../../middleware/jwtValidator";
 import { generateToken } from "../../helpers/jwt";
 
-
 let req, res, next;
 
 beforeEach(() => {
