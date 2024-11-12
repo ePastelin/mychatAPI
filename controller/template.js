@@ -95,7 +95,7 @@ try {
   return res.status(200).json(data);
 } catch(error) {
   console.log('error: ', error)
-  res.status(500).json(error.data.error.error_user_msg)
+  res.status(500).json(error.data)
 }
   
 };
