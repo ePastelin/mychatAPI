@@ -221,16 +221,16 @@ export const getUsers = async (req, res) => {
 
 export const createNumber = async (req, res) => {
   try {
-    const { number } = req.body;
+    const { idNumber, number } = req.body;
 
-    if (!number) {
+    if (!number || !idNumber) {
       return res.status(400).json({
         ok: false,
         message: "Missing required fields",
       });
     }
 
-    await pool.query("INSERT INTO number (number) VALUES (?)", [number]);
+    await pool.query("INSERT INTO number (idnumber, number) VALUES (?)", [idNumber, number]);
 
     res.status(201).json({
       ok: true,
