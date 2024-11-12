@@ -53,8 +53,8 @@ export const createTemplate = async (req, res) => {
   });
 
   const content = `${originalHeaderText}\n${originalBodyText}\n${originalFooterText}`;
-
-  const { data } = await api.post(url, body);
+try {
+ const { data } = await api.post(url, body);
 
   const { id, category } = data;
 
@@ -92,11 +92,12 @@ export const createTemplate = async (req, res) => {
     ]
   );
 
-  if (!data) {
-    return res.status(500).json({ error: "No se recibió respuesta del API." });
-  }
-
-  return res.status(200).json(data); 
+  return res.status(200).json(data);
+} catch(error) {
+  console.log('error: ', error)
+  res.status(500).json(error.data.error.error_user_msg)
+}
+  
 };
 
 export const getTemplate = async (req, res) => {
