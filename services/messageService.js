@@ -76,6 +76,8 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
       );
     }
   });
+  
+  return
 };
 
 export const processIncomingMessage = async (body) => {
