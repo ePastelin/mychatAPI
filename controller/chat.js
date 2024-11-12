@@ -34,6 +34,9 @@ export async function sendMultimedia(req, res) {
   if (!file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
+  if(!idChat) {
+    return res.status(400).json({ error: "No idChat in the request" });
+  }
 
   const { mimetype, buffer, originalname } = file;
   const type = mimetype.startsWith("image/") ? "image" : mimetype.startsWith("application/") && "document";
