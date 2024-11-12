@@ -230,7 +230,7 @@ export const createNumber = async (req, res) => {
       });
     }
 
-    await pool.query("INSERT INTO number (idnumber, number) VALUES (?)", [idNumber, number]);
+    await pool.query("INSERT INTO number (idnumber, number) VALUES (?, ?)", [idNumber, number]);
 
     res.status(201).json({
       ok: true,
