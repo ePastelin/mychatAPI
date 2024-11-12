@@ -69,6 +69,7 @@ export async function sendMultimedia(req, res) {
     const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message);
 
     await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname, idUser);
+    return res.status(200)
   } catch (error) {
     return res.status(400).json(error);
   }
