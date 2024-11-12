@@ -46,16 +46,14 @@ export async function sendMultimedia(req, res) {
 
   try {
     const { our_number, socio_number, user: idUser } = await getChatDetails(pool, idChat);
-
     const url = `${our_number}/media?messaging_product=whatsapp`;
-
     const blob = new Blob([buffer], { type: mimetype });
     const formData = new FormData();
+
     formData.append("file", blob, originalname);
 
     const response = await apiMultimedia.post(url, formData);
     const { id } = response.data;
-
     const message = {
       messaging_product: "whatsapp",
       recipient_type: "individual",
@@ -67,9 +65,9 @@ export async function sendMultimedia(req, res) {
     else if (type === "document") message.document = { id, filename: originalname };
 
     const sendResponse = await apiMultimedia.post(`${our_number}/messages`, message);
-
     await saveMultimedia(id, idChat, sendResponse.data.messages[0].id, mimetype, type, originalname, idUser);
-    return res.status(200)
+
+    res.status(200).json({ ok: true, message: "Multimedia sent successfully" });
   } catch (error) {
     return res.status(400).json(error);
   }
