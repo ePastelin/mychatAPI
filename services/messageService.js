@@ -12,14 +12,8 @@ import __dirname from "../helpers/getDirname.cjs";
 export const updateMessageStatus = async (statuses) => {
   try {
     const { id, status } = statuses[0];
-    await pool.query("UPDATE message SET status = ? WHERE id = ?", [
-      status,
-      id,
-    ]);
-    const [[{ idChat }]] = await pool.query(
-      "SELECT idChat from message WHERE id = ?",
-      [id]
-    );
+    await pool.query("UPDATE message SET status = ? WHERE id = ?", [status, id]);
+    const [[{ idChat }]] = await pool.query("SELECT idChat from message WHERE id = ?", [id]);
     const { user: idUser } = await getChatDetails(pool, idChat);
 
     wss.clients.forEach((client) => {
@@ -40,15 +34,7 @@ export const updateMessageStatus = async (statuses) => {
 export const optimazeImage = async (image) =>
   await sharp(image).resize({ width: 800 }).webp({ quality: 70 }).toBuffer();
 
-export const saveMultimedia = async (
-  id,
-  idChat,
-  idMessage,
-  mime_type,
-  type,
-  filename,
-  idUser
-) => {
+export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, filename, idUser) => {
   const response = await api(id);
   const { url } = response.data;
 
@@ -57,10 +43,7 @@ export const saveMultimedia = async (
   });
   const { data } = multimediaResponse;
   const typeNumber = type === "document" ? 5 : type === "image" && 1;
-  const multimedia =
-    type === "document"
-      ? data
-      : type === "image" && (await optimazeImage(data));
+  const multimedia = type === "document" ? data : type === "image" && (await optimazeImage(data));
 
   const folderPath = path.join(__dirname, `multimedia/${idChat}/${type}/sent`);
   const filePath = path.join(folderPath, filename);
@@ -93,6 +76,8 @@ export const saveMultimedia = async (
       );
     }
   });
+  
+  return
 };
 
 export const processIncomingMessage = async (body) => {
@@ -108,6 +93,45 @@ export const processIncomingMessage = async (body) => {
 
     const { id: idMessage, text } = messages[0];
     const { type } = messages[0];
+
+    if (type === "button") {
+      const message = messages[0].button.text;
+
+      const [existingMessage] = await pool.query("SELECT * FROM message WHERE id = ?", [idMessage]);
+      if (existingMessage.length > 0) {
+        console.log("Mensaje duplicado");
+        return;
+      }
+
+      await pool.query("INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 0, ?)", [
+        idMessage,
+        idChat,
+        message,
+      ]);
+
+      await pool.query(
+        "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW(), isActive = 0 WHERE id = ?",
+        [message, idChat]
+      );
+
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1 && client.idUser == idUser) {
+          client.send(
+            JSON.stringify({
+              idChat,
+              message,
+              sender: 0,
+              date: Date.now(),
+              status: "sent",
+              idMessage: idMessage,
+              isActive: 0,
+            })
+          );
+        }
+      });
+
+      return;
+    }
 
     if (type !== "text") {
       const message = {
@@ -128,13 +152,9 @@ export const processIncomingMessage = async (body) => {
 
       const multimedia = type === "image" ? await optimazeImage(data) : data;
       const filename = type === "document" ? message.filename : "";
-      const typeNumber =
-        type === "image" || type === "sticker" ? 1 : type === "document" && 5;
+      const typeNumber = type === "image" || type === "sticker" ? 1 : type === "document" && 5;
 
-      const folderPath = path.join(
-        __dirname,
-        `multimedia/${idChat}/${type}/sent`
-      );
+      const folderPath = path.join(__dirname, `multimedia/${idChat}/${type}/sent`);
       const filePath = path.join(folderPath, filename);
 
       if (!fs.existsSync(folderPath)) {
@@ -174,19 +194,17 @@ export const processIncomingMessage = async (body) => {
 
     const message = text.body;
 
-    const [existingMessage] = await pool.query(
-      "SELECT * FROM message WHERE id = ?",
-      [idMessage]
-    );
+    const [existingMessage] = await pool.query("SELECT * FROM message WHERE id = ?", [idMessage]);
     if (existingMessage.length > 0) {
       console.log("Mensaje duplicado");
       return;
     }
 
-    await pool.query(
-      "INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 0, ?)",
-      [idMessage, idChat, message]
-    );
+    await pool.query("INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 0, ?)", [
+      idMessage,
+      idChat,
+      message,
+    ]);
     await pool.query(
       "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
       [message, idChat]
