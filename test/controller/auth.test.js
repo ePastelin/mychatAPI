@@ -2,9 +2,10 @@ import { jest, describe, test, expect, beforeEach } from "@jest/globals";
 import { createUser, userLogin, updateUser, deleteUser, getUsers, createNumber, logged } from "../../controller/auth";
 import api from "../../helpers/axios";
 import { pool } from "../../database/config";
-import bcrypt from 'bcryptjs' 
+import bcrypt from 'bcryptjs'
 import { expectedError } from "@babel/core/lib/errors/rewrite-stack-trace";
 import { json, query } from "express";
+import { stringify } from "ts-jest";
 
 jest.mock("../../database/config", () => ({
     __esModule: true,
@@ -42,47 +43,173 @@ const mockNumbers = [
         number: "5219983487842"
     }
 ];
+const mockInsertUser =
+{
+    insertId: 1
+};
+const mockLoginUser = [
+    {
+        id: 1,
+        username: "glover santos concha",
+        password: "$2a$12$ktXmMYmS/XvRMfzgtDrynu4Au5IHG7YLnv2VXgZrR8mv2.ROLwaIC",
+        role: "user",
+    }
+];
+
+const mockValidPassword = {
+    validPassword: true
+};
+
+const mockPhoneNumbers = [99898, 8056856];
+
+const mockPhoneNumbersCurrent = [
+    {
+        number_id:123,
+        number:32897108934790132094
+    }
+];
+
 
 beforeEach(() => {
     res = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
     };
+    pool.query.mockReset();
 });
-/*
+
 describe("createUser", () => {
-    req = {
-        body:{
-            username: "gloversantos",
-            password: null,
-            role: 1,
-            phone_numbers:[
-                99898,8056856
-            ]
-        },
-    };
     beforeEach(() => {
-        pool.query.mockClear();
+        req = {
+            body: {
+                username: "gloversantos",
+                password: "gloversantos1@@@@",
+                role: 1,
+                phone_numbers: [
+                    99898, 8056856
+                ]
+            },
+        };
+        pool.query.mockReset();
     });
-    test('should get a 400', async () => {
+    test('should create a user correctly', async () => {
+        pool.query.mockResolvedValueOnce([mockInsertUser]);
+        await createUser(req, res);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: true,
+            message: "User created successfully",
+            userId: 1
+        });
+    });
+    test('should get the queries correctly', async () => {
+        pool.query.mockResolvedValueOnce([mockInsertUser]);
+        pool.query.mockResolvedValueOnce([mockPhoneNumbers]);
+        await createUser(req, res);
+        expect(pool.query).toHaveBeenNthCalledWith(1, "INSERT INTO users SET ?", [{
+            username: "gloversantos",
+            password: expect.any(String),
+            role: 1
+        }]);
+        expect(pool.query).toHaveBeenCalledTimes(3, "INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)");
+    });
+    test('should get a error 400 because of password empty', async () => {
         req.body.password = null;
         await createUser(req, res);
-        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledWith(400)
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Missing required fields",
+        })
     });
-    test("should create a new user", async () => {
-        req.body.password = "gloversntos";
+    test('Should get a error 500 for a unexpected error', async () => {
+        req = null;
         await createUser(req, res);
-        expect(pool.query).toHaveBeenNthCalledWith(1,"INSERT INTO users SET ?", [{
-            username: "gloversantos",
-            role: 1,
-            password: expect.any(String)
-        }]);
-        expect(pool.query).toHaveBeenNthCalledWith(2,"INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)",[[
-
-        ]]);
+        expect(res.status).toHaveBeenCalledWith(500)
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Error creating user",
+        })
     });
 });
-*/
+
+describe("userLogin", () => {
+    beforeEach(() => {
+        req = {
+            body: {
+                username: "glover santos concha",
+                password: "gloversantos1@"
+            }
+        }
+        pool.query.mockReset();
+    });
+    test("should let the user get in correctly", async () => {
+        pool.query.mockResolvedValueOnce([mockLoginUser]);
+        pool.query.mockResolvedValueOnce(mockValidPassword);
+        await userLogin(req, res);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: true,
+            uid: 1,
+            username: "glover santos concha",
+            role: "user",
+            token: expect.any(String)
+        });
+    });
+    test("should give 400 when the user doesnt exist", async () => {
+        pool.query.mockResolvedValueOnce(mockLoginUser);
+        await userLogin(req, res);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Usuario o contraseña incorrectos"
+        })
+    });
+    test("should give 400 when password is incorrect", async () => {
+        req.body.password = "gloversantos1";
+        pool.query.mockResolvedValueOnce([mockLoginUser]);
+        pool.query.mockResolvedValueOnce(mockValidPassword);
+        await userLogin(req, res);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "User or password incorrect"
+        });
+    });
+    test("should give 500 becuase of a unexpected error", async () => {
+        await userLogin(req, res);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Error logging in"
+        })
+    });
+    test("should check that the query work properly", async () => {
+        pool.query.mockResolvedValueOnce([mockLoginUser]);
+        pool.query.mockResolvedValueOnce(mockValidPassword);
+        await userLogin(req, res);
+        expect(pool.query).toHaveBeenNthCalledWith(1, "SELECT * FROM users WHERE username = ?", ["glover santos concha"]);
+    });
+});
+
+describe("updateUser", () => {
+    beforeEach(() => {
+        req = {
+            params: {
+                id: 1
+            },
+            body: {
+                username: "glover santos concha",
+                password: "gloversantos1@",
+                role: 1,
+                phone_numbers: [123123123123123]
+            }
+        }
+    });
+    test("should update the user correctly with new data", async () => {
+        pool.query.mockResolvedValueOnce([mockPhoneNumbersCurrent]);
+        const currentPhoneNumbers = mockPhoneNumbersCurrent.map((row) => row.number_id);
+        pool.query.mockResolvedValueOnce(currentPhoneNumbers);
+        await updateUser(req, res);
+        expect(res.status).toHaveBeenCalledWith(200);
+    });
+});
+
 describe("getUsers", () => {
     beforeEach(() => {
         req = {};
