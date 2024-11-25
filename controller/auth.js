@@ -20,7 +20,7 @@ export const createUser = async (req, res) => {
 
     // Insert user into database
     const [result] = await pool.query("INSERT INTO users SET ?", [userDetails]);
-    const userId = result.insertId;
+    body.id = result.insertId;
 
     // Insert phone numbers into database
     if (phone_numbers && Array.isArray(phone_numbers)) {
@@ -33,7 +33,7 @@ export const createUser = async (req, res) => {
     res.status(201).json({
       ok: true,
       message: "User created successfully",
-      userId,
+      user: body
     });
   } catch (error) {
     console.log(error);
