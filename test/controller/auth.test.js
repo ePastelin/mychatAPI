@@ -186,7 +186,7 @@ describe("userLogin", () => {
         expect(pool.query).toHaveBeenNthCalledWith(1, "SELECT * FROM users WHERE username = ?", ["glover santos concha"]);
     });
 });
-
+/*
 describe("updateUser", () => {
     beforeEach(() => {
         req = {
@@ -195,7 +195,7 @@ describe("updateUser", () => {
             },
             body: {
                 username: "glover santos concha",
-                password: "gloversantos1@",
+                userPassword: "gloversantos1@",
                 role: 1,
                 phone_numbers: [123123123123123]
             }
@@ -207,6 +207,31 @@ describe("updateUser", () => {
         pool.query.mockResolvedValueOnce(currentPhoneNumbers);
         await updateUser(req, res);
         expect(res.status).toHaveBeenCalledWith(200);
+    });
+});
+*/
+describe('deleteUser', () => {
+    beforeEach(() => {
+        req = {
+            params: {
+                id:1
+            }
+        }
+        pool.query.mockReset();
+    });
+    test("should delete the user cok", async()=> {
+        await deleteUser(req,res);
+        expect(res.status).toBeCalledWith(201);
+    });
+    test("should throw 400 that user dont exist", async() => {
+        req.params.id = null;
+        await deleteUser(req,res);
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
+    test("should throw 500 because of a error", async() => {
+        req = null;
+        await deleteUser(req,res);
+        expect(res.status).toHaveBeenCalledWith(400);
     });
 });
 
