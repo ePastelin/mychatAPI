@@ -231,7 +231,7 @@ describe('deleteUser', () => {
     test("should throw 500 because of a error", async() => {
         req = null;
         await deleteUser(req,res);
-        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledWith(500);
     });
 });
 
@@ -276,5 +276,59 @@ describe("getUsers", () => {
     test('should get a 500 in the response of get user', async () => {
         await getUsers(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
+    });
+});
+
+describe("createNumber", () =>{
+    beforeEach(()=>{
+        req = {
+            body: {
+                idNumber: 123,
+                number: 1234567
+            }
+        };
+    });
+    test("should create the number correctly", async () =>{
+        await createNumber(req,res);
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith({
+            ok:true,
+            message:"Number created"
+        });
+    })
+    test("sould give 400 because of missing parameter", async () =>{
+        req.body.number = null;
+        await createNumber(req,res);
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
+    test("should give 500 because of a error with number", async () =>{
+        req.body = null;
+        await createNumber(req,res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            ok:false,
+            message:"Error creating number"
+        });
+    });
+    test("the query should be correctly done", async () => {
+        await createNumber(req,res);
+        expect(pool.query).toHaveBeenNthCalledWith(1,'INSERT INTO number (idnumber, number) VALUES (?, ?)',[
+            123,
+            1234567
+        ])
+    });
+});
+
+describe("logged", () =>{
+    beforeEach(()=>{
+
+    });
+    test("should loget the user", async ()=>{
+        await logged(req,res);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            ok:true,
+            message: "User logged"
+        });
     });
 });
