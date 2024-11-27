@@ -106,9 +106,9 @@ export const updateUser = async (req, res) => {
     }
 
     // Encrypt password
-    if (body.userPassword !== undefined) {
+    if (body.password !== undefined) {
       const salt = bcrypt.genSaltSync();
-      body.userPassword = bcrypt.hashSync(body.userPassword, salt);
+      body.password = bcrypt.hashSync(body.password, salt);
     }
 
     // Extract phone numbers from body
