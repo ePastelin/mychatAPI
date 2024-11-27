@@ -1,11 +1,6 @@
 import { jest, describe, test, expect, beforeEach } from "@jest/globals";
 import { createUser, userLogin, updateUser, deleteUser, getUsers, createNumber, logged } from "../../controller/auth";
-import api from "../../helpers/axios";
 import { pool } from "../../database/config";
-import bcrypt from 'bcryptjs'
-import { expectedError } from "@babel/core/lib/errors/rewrite-stack-trace";
-import { json, query } from "express";
-import { stringify } from "ts-jest";
 
 jest.mock("../../database/config", () => ({
     __esModule: true,
@@ -222,16 +217,28 @@ describe('deleteUser', () => {
     test("should delete the user cok", async()=> {
         await deleteUser(req,res);
         expect(res.status).toBeCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: true,
+            message: "User deleted"
+        });
     });
     test("should throw 400 that user dont exist", async() => {
         req.params.id = null;
         await deleteUser(req,res);
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "No id provided"
+        });
     });
     test("should throw 500 because of a error", async() => {
         req = null;
         await deleteUser(req,res);
         expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Error deleting user"
+        });
     });
 });
 
@@ -276,6 +283,10 @@ describe("getUsers", () => {
     test('should get a 500 in the response of get user', async () => {
         await getUsers(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            ok: false,
+            message: "Error getting users"
+        });
     });
 });
 
