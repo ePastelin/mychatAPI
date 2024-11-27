@@ -20,21 +20,17 @@ export const createUser = async (req, res) => {
 
     // Insert user into database
     const [result] = await pool.query("INSERT INTO users SET ?", [userDetails]);
-    const userId = result.insertId;
+    body.id = result.insertId;
 
     // Insert phone numbers into database
     if (phone_numbers && Array.isArray(phone_numbers)) {
       const phoneNumberQueries = phone_numbers.map((number) =>
-        pool.query("INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)", [userId, number])
+        pool.query("INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)", [body.id, number])
       );
       await Promise.all(phoneNumberQueries);
     }
 
-    res.status(201).json({
-      ok: true,
-      message: "User created successfully",
-      userId,
-    });
+    res.status(201).json(body);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -106,9 +102,9 @@ export const updateUser = async (req, res) => {
     }
 
     // Encrypt password
-    if (body.userPassword !== undefined) {
+    if (body.password !== undefined) {
       const salt = bcrypt.genSaltSync();
-      body.userPassword = bcrypt.hashSync(body.userPassword, salt);
+      body.password = bcrypt.hashSync(body.password, salt);
     }
 
     // Extract phone numbers from body
@@ -147,11 +143,20 @@ export const updateUser = async (req, res) => {
 
     // Commit the transaction
     await pool.query("COMMIT");
+    
+    const [ rows ] = await pool.query(`SELECT 
+       u.*, 
+       COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers 
+     FROM users u 
+     LEFT JOIN users_numbers n 
+     ON u.id = n.user_id 
+     WHERE u.id = ? 
+     GROUP BY u.id;`,
+    [id])
 
-    res.status(201).json({
-      ok: true,
-      message: "User updated",
-    });
+    const user = rows[0]
+
+    res.status(201).json({...user, phone_numbers: user.phone_numbers ? user.phone_numbers.split(",") : [], });
   } catch (error) {
     // Rollback the transaction in case of an error
     await pool.query("ROLLBACK");
