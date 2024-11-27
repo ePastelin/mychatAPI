@@ -30,11 +30,7 @@ export const createUser = async (req, res) => {
       await Promise.all(phoneNumberQueries);
     }
 
-    res.status(201).json({
-      ok: true,
-      message: "User created successfully",
-      user: body
-    });
+    res.status(201).json(body);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -147,11 +143,20 @@ export const updateUser = async (req, res) => {
 
     // Commit the transaction
     await pool.query("COMMIT");
+    
+    const [ rows ] = await pool.query(`SELECT 
+       u.*, 
+       COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers 
+     FROM users u 
+     LEFT JOIN users_numbers n 
+     ON u.id = n.user_id 
+     WHERE u.id = ? 
+     GROUP BY u.id;`,
+    [id])
 
-    res.status(201).json({
-      ok: true,
-      message: "User updated",
-    });
+    const user = rows[0]
+
+    res.status(201).json({...user, phone_numbers: user.phone_numbers ? user.phone_numbers.split(",") : [], });
   } catch (error) {
     // Rollback the transaction in case of an error
     await pool.query("ROLLBACK");
