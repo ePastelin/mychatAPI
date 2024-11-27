@@ -25,7 +25,7 @@ export const createUser = async (req, res) => {
     // Insert phone numbers into database
     if (phone_numbers && Array.isArray(phone_numbers)) {
       const phoneNumberQueries = phone_numbers.map((number) =>
-        pool.query("INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)", [userId, number])
+        pool.query("INSERT INTO users_numbers (user_id, number_id) VALUES (?, ?)", [body.id, number])
       );
       await Promise.all(phoneNumberQueries);
     }
