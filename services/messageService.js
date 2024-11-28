@@ -72,6 +72,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
           type: typeNumber,
           mimeType: mime_type,
           filename,
+          isActive: 1
         })
       );
     }
@@ -185,6 +186,7 @@ export const processIncomingMessage = async (body) => {
               type: typeNumber,
               mimeType: mime_type,
               filename,
+              isActive: 1
             })
           );
         }
@@ -220,6 +222,7 @@ export const processIncomingMessage = async (body) => {
             date: Date.now(),
             status: "sent",
             idMessage: idMessage,
+            isActive: 1
           })
         );
       }
