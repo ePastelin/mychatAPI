@@ -48,7 +48,8 @@ const notifyClients = (wss, messageId, idChat, message, action, idUser) => {
                 message,
                 sender: 1, 
                 date: Date.now(),
-                status: action === 'message_read' ? 'read' : 'sent'
+                status: action === 'message_read' ? 'read' : 'sent',
+                isActive: 1
             }));
         }
     });
