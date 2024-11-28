@@ -122,10 +122,7 @@ export const updateUser = async (req, res) => {
     }
 
     // Get current phone numbers from the database
-    const row = await pool.query("SELECT number_id FROM users_numbers WHERE user_id = ?", [id]);
-    console.log(row, 'row')
-    const [currentNumbers] = row
-    console.log(currentNumbers, 'currentNumbers')
+    const [currentNumbers] = await pool.query("SELECT number_id FROM users_numbers WHERE user_id = ?", [id]);
     const currentPhoneNumbers = currentNumbers.map((row) => row.number_id);
 
     // Find numbers to delete and to add
