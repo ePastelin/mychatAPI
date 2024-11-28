@@ -198,7 +198,7 @@ export const desactivateUser = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id WHERE u.isActivate = 1 GROUP BY u.id ORDER BY u.role ASC;"
+      "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id WHERE u.isActive = 1 GROUP BY u.id ORDER BY u.role ASC;"
     );
     console.log(rows);
 
