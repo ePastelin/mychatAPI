@@ -170,7 +170,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const desactivateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -181,11 +181,11 @@ export const deleteUser = async (req, res) => {
       });
     }
 
-    await pool.query("DELETE FROM users WHERE id = ?", [id]);
+    await pool.query("UPDATE users SET isActive = 0 WHERE id = ?", [id]);
 
     res.status(201).json({
       ok: true,
-      message: "User deleted",
+      message: "User desactivated",
     });
   } catch (error) {
     return res.status(500).json({
@@ -198,7 +198,7 @@ export const deleteUser = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id GROUP BY u.id;"
+      "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id WHERE u.isActivate = 1 GROUP BY u.id ORDER BY u.role ASC;"
     );
     console.log(rows);
 
