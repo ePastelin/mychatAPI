@@ -101,6 +101,8 @@ export const updateUser = async (req, res) => {
       });
     }
 
+    if(body.password === 'default') delete body.password
+
     // Encrypt password
     if (body.password !== undefined) {
       const salt = bcrypt.genSaltSync();
