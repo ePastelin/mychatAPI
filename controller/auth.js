@@ -252,6 +252,20 @@ export const createNumber = async (req, res) => {
   }
 };
 
+export const getNumbers = async (req, res) => {
+  try {
+    const { id } = req.params
+    const [ numbers ] = pool.query("SELECT (idnumber, number) FROM number")
+    res.status(201).json(numbers)
+  } catch(error) {
+    console.log(error)
+    return res.status(500).json({
+      ok: false,
+      message: "Error getting numbers"
+    })
+  }
+}
+
 export const logged = async (req, res) => {
   res.status(200).json({ ok: true, message: "User logged" });
 };
