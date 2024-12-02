@@ -258,7 +258,7 @@ export const getNumbers = async (req, res) => {
     console.log(id)
     const [ numbers ] = await pool.query("SELECT un.number_id AS numberid, n.number FROM users_numbers un JOIN number n ON un.number_id = n.idnumber WHERE un.user_id = ?", [id])
     console.log(numbers)
-    res.status(201).json({numbers})
+    res.status(201).json(numbers)
   } catch(error) {
     console.log(error)
     return res.status(500).json({
