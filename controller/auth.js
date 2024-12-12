@@ -252,6 +252,22 @@ export const createNumber = async (req, res) => {
   }
 };
 
+export const getNumbers = async (req, res) => {
+  try {
+    const { id } = req.params
+    console.log(id)
+    const [ numbers ] = await pool.query("SELECT un.number_id AS idnumber, n.number FROM users_numbers un JOIN number n ON un.number_id = n.idnumber WHERE un.user_id = ?", [id])
+    console.log(numbers)
+    res.status(201).json(numbers)
+  } catch(error) {
+    console.log(error)
+    return res.status(500).json({
+      ok: false,
+      message: "Error getting numbers"
+    })
+  }
+}
+
 export const logged = async (req, res) => {
   res.status(200).json({ ok: true, message: "User logged" });
 };

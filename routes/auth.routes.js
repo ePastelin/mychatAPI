@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, getUsers, userLogin, desactivateUser, updateUser, createNumber, logged } from '../controller/auth.js';
+import { createUser, getUsers, userLogin, desactivateUser, updateUser, createNumber, logged, getNumbers } from '../controller/auth.js';
 import { jwtValidator } from '../middleware/jwtValidator.js';
 
 const router = Router();
@@ -11,5 +11,6 @@ router.post('/number', createNumber)
 router.post('/login', userLogin)
 router.get('/users', getUsers)
 router.get('/logged', jwtValidator, logged)
+router.get('/numbers/:id', jwtValidator, getNumbers)
 
 export default router
