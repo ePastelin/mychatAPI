@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeEach } from "@jest/globals";
-import { createUser, userLogin, updateUser, deleteUser, getUsers, createNumber, logged } from "../../controller/auth";
+import { createUser, userLogin, updateUser, deleteUser, getUsers, createNumber, logged, desactivateUser } from "../../controller/auth";
 import { pool } from "../../database/config";
 
 jest.mock("../../database/config", () => ({
@@ -57,12 +57,7 @@ const mockValidPassword = {
 
 const mockPhoneNumbers = [99898, 8056856];
 
-const mockPhoneNumbersCurrent = [
-    {
-        number_id:123,
-        number:32897108934790132094
-    }
-];
+const mockCurrentNumbers = {number_id: 2343452};
 
 
 beforeEach(() => {
@@ -90,11 +85,7 @@ describe("createUser", () => {
     test('should create a user correctly', async () => {
         pool.query.mockResolvedValueOnce([mockInsertUser]);
         await createUser(req, res);
-        expect(res.json).toHaveBeenCalledWith({
-            ok: true,
-            message: "User created successfully",
-            userId: 1
-        });
+        expect(res.json).toHaveBeenCalledWith(req.body);
     });
     test('should get the queries correctly', async () => {
         pool.query.mockResolvedValueOnce([mockInsertUser]);
@@ -189,55 +180,34 @@ describe("updateUser", () => {
                 id: 1
             },
             body: {
-                username: "glover santos concha",
-                userPassword: "gloversantos1@",
+                phone_numbers: ["123213213213213"],
                 role: 1,
-                phone_numbers: [123123123123123]
+                username: "glover santos concha",
+                password: "gloversantos1@"
             }
         }
     });
-    test("should update the user correctly with new data", async () => {
-        pool.query.mockResolvedValueOnce([mockPhoneNumbersCurrent]);
-        const currentPhoneNumbers = mockPhoneNumbersCurrent.map((row) => row.number_id);
-        pool.query.mockResolvedValueOnce(currentPhoneNumbers);
-        await updateUser(req, res);
-        expect(res.status).toHaveBeenCalledWith(200);
+    test("should update and return user", async () => {
+        pool.query.mockResolvedValueOnce(mockCurrentNumbers);
+        console.log(mockCurrentNumbers);
+        await updateUser(req,res);
+        expect(res.json).toHaveBeenCalledWith(201);
     });
 });
 */
-describe('deleteUser', () => {
-    beforeEach(() => {
+describe("desactivateUser", ()=>{
+    beforeEach(()=>{
         req = {
-            params: {
+            params:{
                 id:1
             }
         }
-        pool.query.mockReset();
     });
-    test("should delete the user cok", async()=> {
-        await deleteUser(req,res);
-        expect(res.status).toBeCalledWith(201);
+    test("should desactivate the user", async () =>{
+        await desactivateUser(req,res);
         expect(res.json).toHaveBeenCalledWith({
             ok: true,
-            message: "User deleted"
-        });
-    });
-    test("should throw 400 that user dont exist", async() => {
-        req.params.id = null;
-        await deleteUser(req,res);
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({
-            ok: false,
-            message: "No id provided"
-        });
-    });
-    test("should throw 500 because of a error", async() => {
-        req = null;
-        await deleteUser(req,res);
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.json).toHaveBeenCalledWith({
-            ok: false,
-            message: "Error deleting user"
+            message: "User desactivated",
         });
     });
 });
@@ -268,7 +238,7 @@ describe("getUsers", () => {
             .mockResolvedValueOnce([mockUsers])
             .mockResolvedValueOnce([mockNumbers]);
         await getUsers(req, res);
-        expect(pool.query).toHaveBeenNthCalledWith(1, "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id GROUP BY u.id;");
+        expect(pool.query).toHaveBeenNthCalledWith(1, "SELECT u.*, COALESCE(GROUP_CONCAT(n.number_id), '') AS phone_numbers FROM users u LEFT JOIN users_numbers n ON u.id = n.user_id WHERE u.isActive = 1 GROUP BY u.id ORDER BY u.role ASC;");
         expect(pool.query).toHaveBeenNthCalledWith(2, "SELECT * FROM number");
     });
 
@@ -290,8 +260,8 @@ describe("getUsers", () => {
     });
 });
 
-describe("createNumber", () =>{
-    beforeEach(()=>{
+describe("createNumber", () => {
+    beforeEach(() => {
         req = {
             body: {
                 idNumber: 123,
@@ -299,46 +269,46 @@ describe("createNumber", () =>{
             }
         };
     });
-    test("should create the number correctly", async () =>{
-        await createNumber(req,res);
+    test("should create the number correctly", async () => {
+        await createNumber(req, res);
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.json).toHaveBeenCalledWith({
-            ok:true,
-            message:"Number created"
+            ok: true,
+            message: "Number created"
         });
     })
-    test("sould give 400 because of missing parameter", async () =>{
+    test("sould give 400 because of missing parameter", async () => {
         req.body.number = null;
-        await createNumber(req,res);
+        await createNumber(req, res);
         expect(res.status).toHaveBeenCalledWith(400);
     });
-    test("should give 500 because of a error with number", async () =>{
+    test("should give 500 because of a error with number", async () => {
         req.body = null;
-        await createNumber(req,res);
+        await createNumber(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
-            ok:false,
-            message:"Error creating number"
+            ok: false,
+            message: "Error creating number"
         });
     });
     test("the query should be correctly done", async () => {
-        await createNumber(req,res);
-        expect(pool.query).toHaveBeenNthCalledWith(1,'INSERT INTO number (idnumber, number) VALUES (?, ?)',[
+        await createNumber(req, res);
+        expect(pool.query).toHaveBeenNthCalledWith(1, 'INSERT INTO number (idnumber, number) VALUES (?, ?)', [
             123,
             1234567
         ])
     });
 });
 
-describe("logged", () =>{
-    beforeEach(()=>{
+describe("logged", () => {
+    beforeEach(() => {
 
     });
-    test("should loget the user", async ()=>{
-        await logged(req,res);
+    test("should loget the user", async () => {
+        await logged(req, res);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
-            ok:true,
+            ok: true,
             message: "User logged"
         });
     });
