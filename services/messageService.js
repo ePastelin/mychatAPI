@@ -219,13 +219,10 @@ export const processIncomingMessage = async (body) => {
     const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
     
     await saveMessageToDatabase(pool, messageId, idChat, botResponse);
-    
-    notifyClients(wss, messageId, idChat, botResponse, 'message', idUser);
 
-
-    wss.clients.forEach((client) => {
+    wss.clients.forEach(async (client) => {
       if (client.readyState === 1 && client.idUser == idUser) {
-        client.send(
+        await client.send(
           JSON.stringify({
             idChat,
             message,
@@ -236,7 +233,7 @@ export const processIncomingMessage = async (body) => {
             isActive: 1
           })
         );
-        client.send(
+        await client.send(
           JSON.stringify({
             idChat,
             botResponse,
