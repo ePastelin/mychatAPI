@@ -4,11 +4,12 @@ import api, { apiMultimedia } from "../helpers/axios.js";
 import formatNumber from "../helpers/formatNumber.js";
 import { wss } from "../index.js";
 import WebSocket from "ws";
-import { getChatDetails } from "../helpers/querys.js";
+import { getChatDetails, saveMessageToDatabase } from "../helpers/querys.js";
 import fs from "fs";
 import path from "path";
 import __dirname from "../helpers/getDirname.cjs";
 import { chatBotResponse } from "./chatbot.js";
+import { sendWhatsAppMessage } from "../helpers/whatsapp.js";
 
 export const updateMessageStatus = async (statuses) => {
   try {
@@ -221,6 +222,7 @@ export const processIncomingMessage = async (body) => {
     
     notifyClients(wss, messageId, idChat, botResponse, 'message', idUser);
 
+
     wss.clients.forEach((client) => {
       if (client.readyState === 1 && client.idUser == idUser) {
         client.send(
@@ -234,6 +236,16 @@ export const processIncomingMessage = async (body) => {
             isActive: 1
           })
         );
+        client.send(
+          JSON.stringify({
+            idChat,
+            botResponse,
+            sender: 1, 
+            date: Date.now(),
+            idMessage: idMessage,
+            isActive: 1
+          })
+        )
       }
     });
   } catch (error) {
