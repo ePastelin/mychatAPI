@@ -8,6 +8,7 @@ import { getChatDetails } from "../helpers/querys.js";
 import fs from "fs";
 import path from "path";
 import __dirname from "../helpers/getDirname.cjs";
+import { chatBotResponse } from "./chatbot.js";
 
 export const updateMessageStatus = async (statuses) => {
   try {
@@ -211,6 +212,14 @@ export const processIncomingMessage = async (body) => {
       "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
       [message, idChat]
     );
+
+    const botResponse = await chatBotResponse(message)
+
+    const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
+    
+    await saveMessageToDatabase(pool, messageId, idChat, botResponse);
+    
+    notifyClients(wss, messageId, idChat, botResponse, 'message', idUser);
 
     wss.clients.forEach((client) => {
       if (client.readyState === 1 && client.idUser == idUser) {

@@ -1,6 +1,7 @@
 import { pool } from "../database/config.js";
 import { apiMultimedia } from "../helpers/axios.js";
 import { getChatDetails } from "../helpers/querys.js";
+import { chatBotResponse } from "../services/chatbot.js";
 import { saveMultimedia } from "../services/messageService.js";
 
 export async function getChats(req, res) {
@@ -70,5 +71,16 @@ export async function sendMultimedia(req, res) {
     res.status(200).json({ ok: true, message: "Multimedia sent successfully" });
   } catch (error) {
     return res.status(400).json(error);
+  }
+}
+
+export async function chatBot (req, res) {
+  const { message } = req.body
+
+  try {
+    const response = await chatBotResponse(message) 
+    res.status(200).json({ response })
+  } catch(error) {
+    res.status(500).json({error})
   }
 }
