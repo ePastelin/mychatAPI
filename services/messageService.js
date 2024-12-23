@@ -226,9 +226,9 @@ export const processIncomingMessage = async (body) => {
 
 
     wss.clients.forEach(async (client) => {
-     let botResponse = null 
+    let botResponse = null 
     if(idUser === 84) {
-      botResponse = await geminiResponse(message)
+      botResponse = await geminiResponse(message, idChat)
       const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
       await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 

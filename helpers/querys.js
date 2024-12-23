@@ -32,3 +32,22 @@ export const createChats = async (body) => {
         [id, ourNumber, socioNumber, chatType, lastMessage, socioName]
     )
 }
+
+export const getMessageForBot = async (pool, chatId) => {
+    const query = `
+        SELECT sender, message
+        FROM message
+        WHERE idChat = ?
+        ORDER BY date ASC
+    `;
+
+    const [rows] = await pool.query(query, [chatId]);
+
+    // Transformar los resultados al formato deseado
+    const formattedMessages = rows.map(row => ({
+        role: row.sender === 1 ? "model" : "user",
+        parts: [{ text: row.message }]
+    }));
+
+    return formattedMessages;
+}
