@@ -97,6 +97,8 @@ export const processIncomingMessage = async (body) => {
     const { id: idMessage, text } = messages[0];
     const { type } = messages[0];
 
+
+
     if (type === "button") {
       const message = messages[0].button.text;
 
@@ -198,6 +200,12 @@ export const processIncomingMessage = async (body) => {
 
     const message = text.body;
 
+    if(!idChat) {
+      const [createChat] = await pool.query("INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user) VALUES (?, ?, ?, NOW(), 0, 1, 84)", [phone_number_id, socioNumber, message]);
+      idChat = createChat.insertId
+    }
+
+
     const [existingMessage] = await pool.query("SELECT * FROM message WHERE id = ?", [idMessage]);
     if (existingMessage.length > 0) {
       console.log("Mensaje duplicado");
@@ -215,13 +223,15 @@ export const processIncomingMessage = async (body) => {
     );
 
     // const botResponse = await gptResponse(message) 
-    const botResponse = await geminiResponse(message)
 
-    const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
-    
-    await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 
     wss.clients.forEach(async (client) => {
+    if(idUser === 84) {
+      const botResponse = await geminiResponse(message)
+      const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
+      await saveMessageToDatabase(pool, messageId, idChat, botResponse);
+
+    }
 
       if (client.readyState === 1 && client.idUser == idUser) {
         await client.send(
@@ -245,6 +255,7 @@ export const processIncomingMessage = async (body) => {
             isActive: 1
           })
         )
+
       }
     });
   } catch (error) {
