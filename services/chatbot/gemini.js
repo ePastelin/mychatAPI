@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prompt } from "./index.js";
-import { getMessageForBot } from "../../helpers/querys.js";
+import { getMessageForGEMINIBot } from "../../helpers/querys.js";
 import { pool } from "../../database/config.js";
 
 const apiKey = process.env.GEMINI_API_KEY 
@@ -10,7 +10,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstru
 
 export const geminiResponse = async (userContent, idChat) => {
     const chat = model.startChat({
-        history: await getMessageForBot(pool, idChat)
+        history: await getMessageForGEMINIBot(pool, idChat)
     })
 
     let result = await chat.sendMessage(userContent)
