@@ -223,14 +223,13 @@ export const processIncomingMessage = async (body) => {
     );
     let botResponse = null 
     if(idUser === 84) {
-      // botResponse = await geminiResponse(message, idChat)
-      botResponse = await gptResponse(message, idChat) 
+      botResponse = await geminiResponse(message, idChat)
+      // botResponse = await gptResponse(message, idChat) 
       const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
       await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 
     }
     wss.clients.forEach(async (client) => {
-
       if (client.readyState === 1 && client.idUser == idUser) {
         await client.send(
           JSON.stringify({
