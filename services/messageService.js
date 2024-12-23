@@ -221,10 +221,6 @@ export const processIncomingMessage = async (body) => {
       "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
       [message, idChat]
     );
-
-
-
-    wss.clients.forEach(async (client) => {
     let botResponse = null 
     if(idUser === 84) {
       // botResponse = await geminiResponse(message, idChat)
@@ -233,6 +229,8 @@ export const processIncomingMessage = async (body) => {
       await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 
     }
+    wss.clients.forEach(async (client) => {
+
       if (client.readyState === 1 && client.idUser == idUser) {
         await client.send(
           JSON.stringify({

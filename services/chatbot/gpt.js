@@ -11,7 +11,6 @@ export const gptResponse = async (userContent, idChat) => {
     const messages = await getMessageForGPTBot(pool, idChat);
     messages.push({role: 'user', content: userContent})
     
-    console.log('gptMessage', messages)
     const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: messages 
