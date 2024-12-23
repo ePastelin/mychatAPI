@@ -1,3 +1,5 @@
+import { prompt } from "../services/chatbot/prompt.js";
+
 export const saveMessageToDatabase = async (pool, messageId, chatId, message) => {
     const result = await pool.query(
         'INSERT INTO message (id, idChat, sender, message) VALUES (?, ?, 1, ?)', 
@@ -69,6 +71,7 @@ export const getMessageForGPTBot = async (pool, chatId) => {
         content: row.message 
     }));
 
+    formattedMessages.push({role: 'system', content: prompt})
     console.log(formattedMessages, 'formattedMessages');
     return formattedMessages;
 }
