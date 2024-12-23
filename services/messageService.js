@@ -8,7 +8,7 @@ import { getChatDetails, saveMessageToDatabase } from "../helpers/querys.js";
 import fs from "fs";
 import path from "path";
 import __dirname from "../helpers/getDirname.cjs";
-import { chatBotResponse } from "./chatbot.js";
+import { gptResponse, geminiResponse } from "./chatbot/index.js";
 import { sendWhatsAppMessage } from "../helpers/whatsapp.js";
 
 export const updateMessageStatus = async (statuses) => {
@@ -214,13 +214,15 @@ export const processIncomingMessage = async (body) => {
       [message, idChat]
     );
 
-    const botResponse = await chatBotResponse(message)
+    // const botResponse = await gptResponse(message) 
+    const botResponse = await geminiResponse(message)
 
     const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
     
     await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 
     wss.clients.forEach(async (client) => {
+
       if (client.readyState === 1 && client.idUser == idUser) {
         await client.send(
           JSON.stringify({

@@ -1,7 +1,7 @@
 import { pool } from "../database/config.js";
 import { apiMultimedia } from "../helpers/axios.js";
 import { getChatDetails } from "../helpers/querys.js";
-import { chatBotResponse } from "../services/chatbot.js";
+import { chatBotResponse } from "../services/chatbot/gpt.js";
 import { saveMultimedia } from "../services/messageService.js";
 
 export async function getChats(req, res) {
