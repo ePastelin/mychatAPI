@@ -1,3 +1,3 @@
-export * from './gemini'
-export * from './gpt'
-export * from './prompt'
+export * from './prompt.js'
+export * from './gemini.js'
+export * from './gpt.js'

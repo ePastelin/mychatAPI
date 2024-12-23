@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { prompt } from './index'
+import { prompt } from './index.js'
 
 const apiKey = process.env.OPENAI_API_KEY;
 

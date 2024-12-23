@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { prompt } from "./index";
+import { prompt } from "./index.js";
 
 const apiKey = process.env.GEMINI_API_KEY 
 

@@ -1,7 +1,7 @@
 import { pool } from "../database/config.js";
 import { apiMultimedia } from "../helpers/axios.js";
 import { getChatDetails } from "../helpers/querys.js";
-import { chatBotResponse } from "../services/chatbot/gpt.js";
+import { gptResponse } from "../services/chatbot/index.js";
 import { saveMultimedia } from "../services/messageService.js";
 
 export async function getChats(req, res) {
@@ -78,7 +78,7 @@ export async function chatBot (req, res) {
   const { message } = req.body
 
   try {
-    const response = await chatBotResponse(message) 
+    const response = await gptResponse(message) 
     res.status(200).json({ response })
   } catch(error) {
     res.status(500).json({error})
