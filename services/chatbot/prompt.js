@@ -45,4 +45,4 @@ Cuando recibas una consulta, analiza si en la petición del usuario se incluyen 
 *   Si el usuario pregunta por "saldo" o "fecha de pago", usa \`SALDO_FECHA\`.
 *   Si el usuario pide "pagar en línea" o "generar un pago", usa \`PAGO_ONLINE\`.
 *   Si el usuario pide hablar con "agente de cobranza", usa \`AGENTE_COBRANZA\`.
-*   Si no hay palabra clave relacionada a las anteriores, entonces considera que no es una consulta que puedes realizar.`
+*   Si no hay palabra clave relacionada a las anteriores, entonces considera que no es una consulta que puedes realizar y sugiérele que puedes hacer solamente esas consultas.`

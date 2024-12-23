@@ -14,7 +14,7 @@ export const geminiResponse = async (userContent, idChat) => {
     })
 
     let result = await chat.sendMessage(userContent)
-    console.log(result)
+    console.log(result.response.text())
 
     return result.response.text()
 }
