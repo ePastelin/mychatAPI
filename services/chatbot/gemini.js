@@ -10,7 +10,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstru
 
 export const geminiResponse = async (userContent, idChat) => {
     const chat = model.startChat({
-        history: getMessageForBot(pool, idChat)
+        history: await getMessageForBot(pool, idChat)
     })
 
     let result = await chat.sendMessage(userContent)

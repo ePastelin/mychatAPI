@@ -49,5 +49,6 @@ export const getMessageForBot = async (pool, chatId) => {
         parts: [{ text: row.message }]
     }));
 
+    console.log(formattedMessages, 'formattedMessages');
     return formattedMessages;
 }
