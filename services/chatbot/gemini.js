@@ -12,6 +12,7 @@ export const geminiResponse = async (userContent) => {
     })
 
     let result = await chat.sendMessage(userContent)
+    console.log(result)
 
     return result.response.text()
 }

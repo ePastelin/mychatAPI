@@ -226,13 +226,13 @@ export const processIncomingMessage = async (body) => {
 
 
     wss.clients.forEach(async (client) => {
+     let botResponse = null 
     if(idUser === 84) {
-      const botResponse = await geminiResponse(message)
+      botResponse = await geminiResponse(message)
       const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
       await saveMessageToDatabase(pool, messageId, idChat, botResponse);
 
     }
-
       if (client.readyState === 1 && client.idUser == idUser) {
         await client.send(
           JSON.stringify({
@@ -245,6 +245,7 @@ export const processIncomingMessage = async (body) => {
             isActive: 1
           })
         );
+        if (botResponse) {
         await client.send(
           JSON.stringify({
             idChat,
@@ -255,7 +256,7 @@ export const processIncomingMessage = async (body) => {
             isActive: 1
           })
         )
-
+        }
       }
     });
   } catch (error) {
