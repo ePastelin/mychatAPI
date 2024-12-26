@@ -1,3 +1,9 @@
 node_modules
 coverage/
 .env
+.env.production
+/ssl/
+*.crt
+*.key
+*.csr
+*.pem
