@@ -9,10 +9,6 @@ import setupWebSocket from "./services/websocket.js";
 import routes from "./routes/index.js";
 import __dirname from "./helpers/getDirname.cjs";
 
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("PORT:", process.env.PORT);
-console.log("CERT_PATH:", process.env.CERT_PATH);
-
 const PORT = process.env.PORT || 3000;
 const USE_HTTPS = process.env.USE_HTTPS === "true";
 
@@ -22,7 +18,7 @@ const server = USE_HTTPS
       {
         cert: fs.readFileSync(process.env.CERT_PATH),
         key: fs.readFileSync(process.env.KEY_PATH),
-        cert: fs.readFileSync(process.env.CA_PATH),
+        ca: fs.readFileSync(process.env.CA_PATH),
       },
       app
     )
@@ -34,9 +30,10 @@ getConnection();
 
 app.use(cors());
 app.use(express.json());
-app.use(routes);
 
 app.use("/multimedia", express.static(path.join(__dirname, "multimedia")));
+
+app.use(routes);
 
 server.listen(PORT, () => {
   console.log(`Servidor ${USE_HTTPS ? "HTTPS" : "HTTP"} escuchando en el puerto ${PORT}`);
