@@ -47,7 +47,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
   const typeNumber = type === "document" ? 5 : type === "image" && 1;
   const multimedia = type === "document" ? data : type === "image" && (await optimazeImage(data));
 
-  const folderPath = path.join(`/multimedia/${idChat}/${type}/sent`);
+  const folderPath = path.join(__dirname, `multimedia/${idChat}/${type}/sent`);
   const filePath = path.join(folderPath, filename);
 
   if (!fs.existsSync(folderPath)) {
