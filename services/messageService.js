@@ -49,6 +49,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 
   const folderPath = path.join(__dirname, `multimedia/${idChat}/${type}/sent`);
   const filePath = path.join(folderPath, filename);
+  const bdPath = `/multimedia/${idChat}/${type}/sent/${filename}`;
 
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -58,7 +59,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 
   await pool.query(
     "INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 1, ?, ?, ?, ?)",
-    [idMessage, idChat, filePath, typeNumber, mime_type, filename]
+    [idMessage, idChat, bdPath, typeNumber, mime_type, filename]
   );
 
   wss.clients.forEach((client) => {
