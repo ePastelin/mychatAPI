@@ -71,7 +71,7 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
           date: Date.now(),
           status: "sent",
           idMessage: idMessage,
-          media: filePath,
+          media: bdPath,
           type: typeNumber,
           mimeType: mime_type,
           filename,
@@ -162,6 +162,7 @@ export const processIncomingMessage = async (body) => {
 
       const folderPath = path.join(__dirname, `multimedia/${idChat}/${type}/sent`);
       const filePath = path.join(folderPath, filename);
+      const bdPath = `/multimedia/${idChat}/${type}/sent/${filename}`;
 
       if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath, { recursive: true });
@@ -171,7 +172,7 @@ export const processIncomingMessage = async (body) => {
 
       await pool.query(
         "INSERT INTO message (id, idChat, sender, media, type, mimeType, filename) VALUES (?, ?, 0, ?, ?, ?, ?)",
-        [idMessage, idChat, filePath, typeNumber, mime_type, filename]
+        [idMessage, idChat, bdPath, typeNumber, mime_type, filename]
       );
       await pool.query(
         "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
@@ -187,7 +188,7 @@ export const processIncomingMessage = async (body) => {
               date: Date.now(),
               status: "sent",
               idMessage: idMessage,
-              media: filePath,
+              media: bdPath,
               type: typeNumber,
               mimeType: mime_type,
               filename,
