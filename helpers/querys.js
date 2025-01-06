@@ -45,11 +45,14 @@ ORDER BY date ASC;
 
   const [rows] = await pool.query(query, [chatId]);
 
-  // Transformar los resultados al formato deseado
   const formattedMessages = rows.map((row) => ({
     role: row.sender === 1 ? "model" : "user",
     parts: [{ text: row.message }],
   }));
+
+  if (formattedMessages[0].role !== "user") {
+    formattedMessages.unshift({ role: "user", parts: [{ text: "Hola" }] });
+  }
 
   console.log(formattedMessages, "formattedMessages");
   return formattedMessages;
@@ -70,13 +73,17 @@ ORDER BY date ASC;
 
   const [rows] = await pool.query(query, [chatId]);
 
-  // Transformar los resultados al formato deseado
   const formattedMessages = rows.map((row) => ({
     role: row.sender === 1 ? "assistant" : "user",
     content: row.message,
   }));
 
   formattedMessages.push({ role: "system", content: prompt });
+  if (formattedMessages[0].role !== "user") {
+    formattedMessages.unshift({ role: "user", content: "Hola" });
+  }
+
   console.log(formattedMessages, "formattedMessages");
+
   return formattedMessages;
 };
