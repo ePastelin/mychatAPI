@@ -1,5 +1,4 @@
 import OpenAI from 'openai';
-import { prompt } from './index.js'
 import { getMessageForGPTBot } from '../../helpers/querys.js';
 import { pool } from '../../database/config.js';
 
@@ -15,5 +14,6 @@ export const gptResponse = async (userContent, idChat) => {
         model: 'gpt-4o-mini',
         messages: messages 
     })
+    
     return completion.choices[0].message.content;
 }

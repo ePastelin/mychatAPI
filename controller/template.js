@@ -119,7 +119,7 @@ export const getTemplate = async (req, res) => {
 export const sendTemplate = async (req, res) => {
   const { whatsapp, database } = req.body;
   const { message, socioName, ourNumber } = database;
-  const { id } = req; // ID del usuario
+  const { id } = req;
   const url = `${ourNumber}/messages`;
 
   const socioNumber = whatsapp.to;
@@ -169,6 +169,7 @@ export const sendTemplate = async (req, res) => {
            VALUES (?, ?, ?, ?, ?, ?)`,
         [ourNumber, socioNumber, 1, message, socioName, id]
       );
+
       idChat = chatRes.insertId;
 
       await pool.query(
