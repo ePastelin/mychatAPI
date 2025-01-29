@@ -18,8 +18,8 @@ const router = Router();
 router.post("/send/multimedia", jwtValidator, upload.single("file"), sendMultimedia);
 router.post("/chatbot", chatBot);
 router.get("/", jwtValidator, getChats);
+router.get("/admin/info", adminValidator, getAdminChats);
+router.patch("/admin/info/:id", adminValidator, updateChatInfo);
 router.get("/:id", jwtValidator, getMessages);
-router.get("/admin", adminValidator, getAdminChats);
-router.patch("/admin", adminValidator, updateChatInfo);
 
 export default router;

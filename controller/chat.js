@@ -21,6 +21,7 @@ export async function getAdminChats(req, res) {
     const [chats] = await pool.query(
       "SELECT c.id, c.socio_number, c.socio_name, c.user, c.isActive, c.create_date, u.username FROM chat c JOIN users u ON c.user = u.id"
     );
+    console.log(chats);
     res.json(chats);
   } catch (error) {
     req.status(500).json(error);
@@ -29,10 +30,14 @@ export async function getAdminChats(req, res) {
 
 export async function updateChatInfo(req, res) {
   const { id } = req.params;
-  const { body } = req.params;
+  const { body } = req;
 
-  await pool.query("UPDATE users SET ? WHERE id = ?", [body, id]);
-  res.status(200);
+  try {
+    await pool.query("UPDATE chat SET ? WHERE id = ?", [body, id]);
+    res.status(201).json()
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
 export async function getMessages(req, res) {
