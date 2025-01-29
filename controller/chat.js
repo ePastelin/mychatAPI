@@ -16,6 +16,25 @@ export async function getChats(req, res) {
   }
 }
 
+export async function getAdminChats(req, res) {
+  try {
+    const [chats] = await pool.query(
+      "SELECT c.id, c.socio_number, c.socio_name, c.user, c.isActive, c.create_date, u.username FROM chat c JOIN users u ON c.user = u.id"
+    );
+    res.json(chats);
+  } catch (error) {
+    req.status(500).json(error);
+  }
+}
+
+export async function updateChatInfo(req, res) {
+  const { id } = req.params;
+  const { body } = req.params;
+
+  await pool.query("UPDATE users SET ? WHERE id = ?", [body, id]);
+  res.status(200);
+}
+
 export async function getMessages(req, res) {
   const { id } = req.params;
 
@@ -35,7 +54,7 @@ export async function sendMultimedia(req, res) {
   if (!file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-  if(!idChat) {
+  if (!idChat) {
     return res.status(400).json({ error: "No idChat in the request" });
   }
 
@@ -74,13 +93,13 @@ export async function sendMultimedia(req, res) {
   }
 }
 
-export async function chatBot (req, res) {
-  const { message } = req.body
+export async function chatBot(req, res) {
+  const { message } = req.body;
 
   try {
-    const response = await gptResponse(message) 
-    res.status(200).json({ response })
-  } catch(error) {
-    res.status(500).json({error})
+    const response = await gptResponse(message);
+    res.status(200).json({ response });
+  } catch (error) {
+    res.status(500).json({ error });
   }
 }
