@@ -226,6 +226,18 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const getUsersInfo = async (req, res) => {
+  try {
+    const [ users ] = await pool.query("SELECT id AS value, username AS label FROM users")
+    res.status(200).json(users)
+  } catch(error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Error getting users"
+    })
+  }
+}
+
 export const createNumber = async (req, res) => {
   try {
     const { idNumber, number } = req.body;
