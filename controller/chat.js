@@ -19,8 +19,9 @@ export async function getChats(req, res) {
 export async function getAdminChats(req, res) {
   try {
     const [chats] = await pool.query(
-      "SELECT c.id, c.socio_name, c.socio_number, c.isActive, c.create_date, u.username, c.user FROM chat c JOIN users u ON c.user = u.id"
+      "SELECT c.id, c.socio_name, c.socio_number, c.isActive, DATE_FORMAT(c.create_date, '%d/%m/%Y') as create_date, u.username, c.user FROM chat c JOIN users u ON c.user = u.id"
     );
+
     console.log(chats);
     res.json(chats);
   } catch (error) {
