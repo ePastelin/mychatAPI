@@ -4,6 +4,7 @@ import chat from './chat.routes.js'
 import auth from './auth.routes.js'
 import templates from './template.routes.js'
 import dashboard from '../dashboard/routes/dashboard.routes.js'
+import chatbot from '../chatbot/routes/chatbot.routes.js'
 
 const router = Router()
 
@@ -12,6 +13,7 @@ router.use('/api/chat', chat)
 router.use('/api/auth', auth)
 router.use('/api/templates', templates)
 router.use('/api/dashboard', dashboard)
+router.use('/api/chatbot', chatbot)
 
 
 export default router

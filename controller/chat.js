@@ -8,7 +8,7 @@ export async function getChats(req, res) {
   const userId = req.id;
 
   try {
-    const [chats] = await pool.query(`SELECT * FROM chat WHERE user = ?`, [userId]);
+    const [chats] = await pool.query(`SELECT * FROM chat WHERE user = ? AND isDeleted = 0`, [userId]);
 
     res.json({ chats });
   } catch (error) {
@@ -19,7 +19,7 @@ export async function getChats(req, res) {
 export async function getAdminChats(req, res) {
   try {
     const [chats] = await pool.query(
-      "SELECT c.id, c.socio_name, c.socio_number, c.isActive, DATE_FORMAT(c.create_date, '%d/%m/%Y') as create_date, u.username, c.user FROM chat c JOIN users u ON c.user = u.id"
+      "SELECT c.id, c.socio_name, c.socio_number, c.isActive, DATE_FORMAT(c.create_date, '%d/%m/%Y') as create_date, u.username, c.user FROM chat c JOIN users u ON c.user = u.id WHERE c.isDeleted = 0"
     );
 
     console.log(chats);
@@ -35,10 +35,34 @@ export async function updateChatInfo(req, res) {
 
   try {
     await pool.query("UPDATE chat SET ? WHERE id = ?", [body, id]);
-    res.status(201).json()
+    res.status(201).json({
+      ok: true,
+      messsage: "Actualizado con éxito"
+    })
   } catch (error) {
-    res.status(500).json(error);
+    res.status(400).json({
+      ok: false,
+      message: "Error en la actualización"
+    });
   }
+}
+
+export async function deleteChat(req, res) {
+  const { id } = req.params;
+
+  try {
+    await pool.query("UPDATE chat SET isDeleted = 1 WHERE id = ?", [id])
+    res.status(201).json({
+      ok: true,
+      message: "Eliminado con éxito"
+    })
+  } catch (error) {
+    res.status(400).json({
+      ok: false,
+      message: "Error eliminando"
+    })
+  }
+  
 }
 
 export async function getMessages(req, res) {

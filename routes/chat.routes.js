@@ -6,6 +6,7 @@ import {
   sendMultimedia,
   getAdminChats,
   updateChatInfo,
+  deleteChat,
 } from "../controller/chat.js";
 import { adminValidator, jwtValidator } from "../middleware/jwtValidator.js";
 import multer from "multer";
@@ -21,5 +22,6 @@ router.get("/", jwtValidator, getChats);
 router.get("/admin/info", adminValidator, getAdminChats);
 router.patch("/admin/info/:id", adminValidator, updateChatInfo);
 router.get("/:id", jwtValidator, getMessages);
+router.patch("/:id", jwtValidator, deleteChat)
 
 export default router;

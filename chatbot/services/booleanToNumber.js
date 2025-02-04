@@ -1,0 +1,1 @@
+export const booleanToNumber = (boolean) => boolean ? '1' : '0'
