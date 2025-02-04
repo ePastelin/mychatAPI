@@ -95,7 +95,7 @@ try {
   return res.status(200).json(data);
 } catch(error) {
   console.log('error: ', error)
-  res.status(500).json(error.data)
+  res.status(500).json({ok: false, message: "Error enviando la plantilla"})
 }
   
 };
@@ -178,11 +178,11 @@ export const sendTemplate = async (req, res) => {
         [idMessage, idChat, 1, message, "delivered"]
       );
 
-      return res.status(200).json({ ok: true });
+      return res.status(200).json({ ok: true, message: "Plantilla enviada con éxito" });
     }
   } catch (error) {
     console.error("Error al enviar el mensaje:", error);
-    return res.status(500).json({ ok: false, error: error.message });
+    return res.status(500).json({ ok: false, error: "Hubo un error enviando la plantilla" });
   }
 };
 
