@@ -89,7 +89,7 @@ export const processIncomingMessage = async (body) => {
     const { metadata, messages, contacts } = body.entry[0].changes[0].value;
     const { phone_number_id } = metadata;
     console.log(metadata, messages)
-    console.log("contacts: ", contacts[0].profile)
+    console.log("contacts: ", contacts[0].profile.name)
     const socioNumber = formatNumber(messages[0].from);
 
     const [chatResult] = await pool.query(
@@ -104,9 +104,10 @@ export const processIncomingMessage = async (body) => {
       idUser = chatResult[0].user;
     } else {
       // Create a new chat entry if it doesn't exist
+      const socioName = contacts[0].profile.name
       const [createChat] = await pool.query(
-        "INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user) VALUES (?, ?, ?, NOW(), 0, 1, 84)",
-        [phone_number_id, socioNumber, "New conversation"]
+        "INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user, socio_name) VALUES (?, ?, ?, NOW(), 0, 1, 84, ?)",
+        [phone_number_id, socioNumber, "New conversation", socioName]
       );
       idChat = createChat.insertId;
       idUser = 84; // Assign a default user if necessary
