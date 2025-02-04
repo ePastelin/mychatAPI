@@ -88,7 +88,7 @@ export const processIncomingMessage = async (body) => {
   try {
     const { metadata, messages } = body.entry[0].changes[0].value;
     const { phone_number_id } = metadata;
-    console.log(metadata)
+    console.log(metadata, messages)
     const socioNumber = formatNumber(messages[0].from);
 
     const [chatResult] = await pool.query(
