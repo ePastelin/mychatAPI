@@ -5,10 +5,9 @@ export const changeChatbotStatusController = async (_req, res) => {
     try {
        const status = await changeChatbotStatus(chatbotRepository)
 
-        res.statusText = `El chatbot ha sido ${status ? 'activado' : 'desactivado'}` 
         res.status(201).json({
             ok: true,
-            message: "Estatus del chatbot cambiado con éxito"
+            message: `Chatbot ${status ? 'activado' : 'desactivado'} con éxito`
         })
     } catch(error) {
         res.status(400).json({
