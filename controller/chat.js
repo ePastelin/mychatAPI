@@ -35,9 +35,10 @@ export async function updateChatInfo(req, res) {
 
   try {
     await pool.query("UPDATE chat SET ? WHERE id = ?", [body, id]);
+    res.statusText = "Actualizado con éxito"
     res.status(201).json({
       ok: true,
-      messsage: "Actualizado con éxito"
+      messsage: "Chat actualizado con éxito"
     })
   } catch (error) {
     res.status(400).json({
@@ -52,6 +53,7 @@ export async function deleteChat(req, res) {
 
   try {
     await pool.query("UPDATE chat SET isDeleted = 1 WHERE id = ?", [id])
+    res.statusText = "Chat eliminado con éxito"
     res.status(201).json({
       ok: true,
       message: "Eliminado con éxito"

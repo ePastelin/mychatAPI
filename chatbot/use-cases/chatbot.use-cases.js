@@ -3,9 +3,9 @@ export const changeChatbotStatus = async (chatbotRepository) => {
 
     const botStatusChanged = !chatbotStatus // !true = false || !false = true
 
-    const updatedChatbot = await chatbotRepository.changeStatus(botStatusChanged)
+    await chatbotRepository.changeStatus(botStatusChanged)
 
-    return updatedChatbot
+    return botStatusChanged
 }
 
 export const getChatbotStatus = async (chatbotRepository) => {

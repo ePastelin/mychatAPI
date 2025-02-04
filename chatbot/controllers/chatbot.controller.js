@@ -3,8 +3,9 @@ import { changeChatbotStatus, getChatbotStatus } from "../use-cases/chatbot.use-
 
 export const changeChatbotStatusController = async (_req, res) => {
     try {
-        await changeChatbotStatus(chatbotRepository)
+       const status = await changeChatbotStatus(chatbotRepository)
 
+        res.statusText = `El chatbot ha sido ${status ? 'activado' : 'desactivado'}` 
         res.status(201).json({
             ok: true,
             message: "Estatus del chatbot cambiado con éxito"
@@ -18,7 +19,6 @@ export const changeChatbotStatusController = async (_req, res) => {
 }
 
 export const getChatbotStatusController = async (_req, res) => {
-
     const status = await getChatbotStatus(chatbotRepository)
 
     try {
