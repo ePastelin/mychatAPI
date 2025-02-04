@@ -90,10 +90,25 @@ export const processIncomingMessage = async (body) => {
     const { phone_number_id } = metadata;
     const socioNumber = formatNumber(messages[0].from);
 
-    const [[{ id: idChat, user: idUser }]] = await pool.query(
-      "SELECT id,  user FROM chat WHERE our_number = ? AND socio_number = ?",
+    const [chatResult] = await pool.query(
+      "SELECT id, user FROM chat WHERE our_number = ? AND socio_number = ?",
       [phone_number_id, socioNumber]
     );
+    
+    let idChat, idUser;
+    
+    if (chatResult.length > 0) {
+      idChat = chatResult[0].id;
+      idUser = chatResult[0].user;
+    } else {
+      // Create a new chat entry if it doesn't exist
+      const [createChat] = await pool.query(
+        "INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user) VALUES (?, ?, ?, NOW(), 0, 1, 84)",
+        [phone_number_id, socioNumber, "New conversation"]
+      );
+      idChat = createChat.insertId;
+      idUser = 84; // Assign a default user if necessary
+    }
 
     const { id: idMessage, text } = messages[0];
     const { type } = messages[0];
@@ -201,13 +216,6 @@ export const processIncomingMessage = async (body) => {
     }
 
     const message = text.body;
-
-    console.log('idChat exists:', idChat)
-    if(!idChat) {
-      const [createChat] = await pool.query("INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user) VALUES (?, ?, ?, NOW(), 0, 1, 84)", [phone_number_id, socioNumber, message]);
-      idChat = createChat.insertId
-    }
-
 
     const [existingMessage] = await pool.query("SELECT * FROM message WHERE id = ?", [idMessage]);
     if (existingMessage.length > 0) {
