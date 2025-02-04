@@ -202,6 +202,7 @@ export const processIncomingMessage = async (body) => {
 
     const message = text.body;
 
+    console.log('idChat exists:', idChat)
     if(!idChat) {
       const [createChat] = await pool.query("INSERT INTO chat (our_number, socio_number, last_message, last_date, unread, isActive, user) VALUES (?, ?, ?, NOW(), 0, 1, 84)", [phone_number_id, socioNumber, message]);
       idChat = createChat.insertId
@@ -223,8 +224,13 @@ export const processIncomingMessage = async (body) => {
       "UPDATE chat SET last_message = ?, unread = unread + 1, last_date = NOW() WHERE id = ?",
       [message, idChat]
     );
+
+    const [[{ is_bot_active: isChatbotActive }]] = await pool.query(
+      "SELECT is_bot_active FROM chatbot WHERE id = 1"
+    )
+  
     let botResponse = null 
-    if(idUser === 84) {
+    if(idUser === 84 && !!isChatbotActive) {
       botResponse = await geminiResponse(message, idChat)
       // botResponse = await gptResponse(message, idChat) 
       const messageId = await sendWhatsAppMessage(phone_number_id, socioNumber, botResponse);
