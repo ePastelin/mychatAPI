@@ -86,9 +86,10 @@ export const saveMultimedia = async (id, idChat, idMessage, mime_type, type, fil
 
 export const processIncomingMessage = async (body) => {
   try {
-    const { metadata, messages } = body.entry[0].changes[0].value;
+    const { metadata, messages, contacts } = body.entry[0].changes[0].value;
     const { phone_number_id } = metadata;
     console.log(metadata, messages)
+    console.log("contacts: ", contacts[0].profile)
     const socioNumber = formatNumber(messages[0].from);
 
     const [chatResult] = await pool.query(
