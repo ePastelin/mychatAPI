@@ -158,7 +158,7 @@ export const updateUser = async (req, res) => {
 
     const user = rows[0]
 
-    res.status(201).json({...user, phone_numbers: user.phone_numbers ? user.phone_numbers.split(",") : [], });
+    res.status(201).json({...user, phone_numbers: user.phone_numbers ? user.phone_numbers.split(",") : [], message: 'Usuario actualizado con éxito'});
   } catch (error) {
     // Rollback the transaction in case of an error
     await pool.query("ROLLBACK");
@@ -185,7 +185,7 @@ export const desactivateUser = async (req, res) => {
 
     res.status(201).json({
       ok: true,
-      message: "User desactivated",
+      message: "Usuario desactivado",
     });
   } catch (error) {
     return res.status(500).json({
@@ -281,5 +281,5 @@ export const getNumbers = async (req, res) => {
 }
 
 export const logged = async (req, res) => {
-  res.status(200).json({ ok: true, message: "User logged" });
+  res.status(200).json({ ok: true });
 };
