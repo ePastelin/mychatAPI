@@ -38,7 +38,7 @@ export async function updateChatInfo(req, res) {
     res.statusText = "Actualizado con éxito"
     res.status(201).json({
       ok: true,
-      messsage: "Chat actualizado con éxito"
+      message: "Chat actualizado con éxito"
     })
   } catch (error) {
     res.status(400).json({
